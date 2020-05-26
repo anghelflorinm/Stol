@@ -1,0 +1,14 @@
+-STOL
+
+uploadezi fisiere mari
+un user sa isi adauge 3 conturi - drive, outlook, dropbox
+sa isi descarce fisierele inapoi
+
+un admin care poate sterge useri 
+
+unit teste 
+
+frontend - layout responsive  (flexbox)
+
+backend - node.js -  baza de date - usrri ,fisierele si unde se afla, token-uri pentru cont 
+
