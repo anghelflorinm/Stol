@@ -1,13 +1,18 @@
 const http = require('http');
+const https = require('https');
 const url = require('url');
 const path = require('path');
 const fs = require('fs');
-
+const options = {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
+  };
 
 const hostname = 'localhost';
 const port = 3000;
 
-const server = http.createServer((req, res) => {
+const server = https.createServer(options,function(req, res) {
+    
     res.setHeader('Access-Control-Allow-Origin', '*');
     let parsedURL = url.parse(req.url, true);
 
@@ -33,6 +38,7 @@ const server = http.createServer((req, res) => {
         //servim aici un template pt web
         serveFrontend(data, res);
     }
+    
 });
 
 
