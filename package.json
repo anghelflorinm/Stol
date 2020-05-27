@@ -16,5 +16,8 @@
     "bugs": {
         "url": "https://github.com/anghelflorinm/Stol/issues"
     },
-    "homepage": "https://github.com/anghelflorinm/Stol#readme"
+    "homepage": "https://github.com/anghelflorinm/Stol#readme",
+    "dependencies": {
+        "mongodb": "^3.5.7"
+    }
 }
