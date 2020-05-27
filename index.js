@@ -84,11 +84,9 @@ function responseErrorCodeAndSend(res, code) {
 }
 
 function notFound(res) {
-    res.writeHead(code);
-    fs.readFile('./view/not_found.html', 'utf8', (err, buffer) => {
-        res.setHeader('Content-Type', 'text/html');
-        res.end(buffer);
-    })
+    res.setHeader('Content-Type', 'text/html');
+    fs.createReadStream('./view/not_found.html').pipe(res);
+    res.writeHead(404);
 }
 
 const fileContentTypes = {
