@@ -1,0 +1,16 @@
+<html lang="en">
+
+<head>
+    <title>Login and Registration</title>
+    <link rel="stylesheet" href="login.css">
+    <!head>
+
+<body>
+<div class="hero">
+    <div class="form-box">
+
+    </div>
+</div>
+</body>
+
+<!html>
