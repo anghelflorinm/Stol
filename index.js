@@ -3,51 +3,22 @@ const https = require('https');
 const url = require('url');
 const path = require('path');
 const fs = require('fs');
+const mongoSingleton = require('./model/mongoSingleton')
+const loginController = require('./controller/loginController')
+
 const options = {
     key: fs.readFileSync('key.pem'),
     cert: fs.readFileSync('cert.pem')
-  };
-
-const hostname = 'localhost';
-const port = 3000;
-
-const {MongoClient} = require('mongodb');
-
-async function main(){
-    /**
-     * Connection URI. Update <username>, <password>, and <your-cluster-url> to reflect your cluster.
-     * See https://docs.mongodb.com/ecosystem/drivers/node/ for more details
-     */
-    const uri = "mongodb+srv://stol:drbirds@stol-8lwdg.mongodb.net/test?retryWrites=true&w=majority";
- 
-
-    const client = new MongoClient(uri);
- 
-    try {
-        // Connect to the MongoDB cluster
-        await client.connect();
- 
-        // Make the appropriate DB calls
-        await  listDatabases(client);
- 
-    } catch (e) {
-        console.error(e);
-    } finally {
-        await client.close();
-    }
-}
-
-async function listDatabases(client){
-    databasesList = await client.db().admin().listDatabases();
- 
-    console.log("Databases:");
-    databasesList.databases.forEach(db => console.log(` - ${db.name}`));
 };
 
-main().catch(console.error);
+const hostname = 'localhost';
+const apiPath = 'api';
+const port = 3000;
 
-const server = https.createServer(options,function(req, res) {
-    
+
+
+const server = https.createServer(options, async function(req, res) {
+
     res.setHeader('Access-Control-Allow-Origin', '*');
     let parsedURL = url.parse(req.url, true);
 
@@ -59,25 +30,41 @@ const server = https.createServer(options,function(req, res) {
     let headers = req.headers;
     let method = req.method;
 
+
+
     let data = {
         requestPath: requestPath,
         queryString: queryString,
         headers: headers,
         method: method,
-        buffer: {}
+        buffer: ''
     }
 
-    if (requestPath.startsWith('api')) {
+    data.buffer = await getBodyData(req);
+
+    console.log(data.buffer);
+
+    if (requestPath.startsWith(apiPath)) {
+        requestPath = requestPath.substr(apiPath.length + 1);
+
+        if (data.method === 'POST' && requestPath === 'create-user') {
+            loginController.createUser(data, res);
+            return;
+        }
+        if (data.method === 'POST' && requestPath === 'login') {
+            loginController.login(data, res);
+        }
 
     } else {
         //servim aici un template pt web
         serveFrontend(data, res);
     }
-    
+
 });
 
 
 server.listen(port, hostname, () => {
+    mongoSingleton.init();
     console.log("Server listening at port " + port.toString());
 });
 
@@ -128,6 +115,18 @@ function notFound(res) {
     res.setHeader('Content-Type', 'text/html');
     fs.createReadStream('./view/not_found.html').pipe(res);
     res.writeHead(404);
+}
+
+function getBodyData(req) {
+    return new Promise(function(resolve, reject) {
+        let buffer = '';
+        req.on('data', chunk => {
+            buffer += chunk.toString(); // convert Buffer to string
+        });
+        req.on('end', () => {
+            resolve(buffer);
+        });
+    })
 }
 
 const fileContentTypes = {

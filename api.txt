@@ -1,0 +1,24 @@
+/api
+
+
+POST /api/create-user
+
+{"username":"davidisimo040", password:"sadad", email??}
+
+-stocam inforamtiile in mongodb
+
+raspuns status 201 resource created
+
+POST /api/login
+
+body : {"username":"davidisimo040", password:"sadad", email??}
+
+response: -JWT token "sdadposkaopdk9.saiidhsaidj.saidadj90", 200 ok
+          - {"message":"invlid credentials"}, 401 unauthorized
+
+
+
+
+Authorization: Bearer "token"
+
+
