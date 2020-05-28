@@ -26,7 +26,7 @@ async function insertUser(userInfo) {
 async function loginUser(userInfo) {
     let responseObject = { code: 200, message: 'Authentication Successful!!!' };
     let passwordHash = crypto.createHash('sha256').update(userInfo.password).digest('hex');
-    let result = await mongoSingelton.usersDB.findOne({ $or: [{ "username": userInfo.username }, { "email": userInfo.username }], "password": passwordHash });
+    let result = await mongoSingelton.usersDB.findOne({ $or: [{ "username": userInfo.username }, { "email": userInfo.email }], "password": passwordHash });
     if (result == null) {
         return utilStol.getResponseObject(401, 'Wrong username/email or password');
     }
