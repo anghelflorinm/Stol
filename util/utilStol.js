@@ -16,4 +16,5 @@ function jsonResponse(res, responseObject) {
     res.end();
 }
 
+
 module.exports = { jsonResponse, getResponseObject, jsonAndSend }

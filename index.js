@@ -4,7 +4,9 @@ const url = require('url');
 const path = require('path');
 const fs = require('fs');
 const mongoSingleton = require('./model/mongoSingleton')
+
 const loginController = require('./controller/loginController')
+const fileController = require('./controller/fileController');
 
 const options = {
     key: fs.readFileSync('key.pem'),
@@ -37,23 +39,36 @@ const server = https.createServer(options, async function(req, res) {
         queryString: queryString,
         headers: headers,
         method: method,
-        buffer: ''
+        buffer: '',
+        request: req
     }
 
-    data.buffer = await getBodyData(req);
+
 
     console.log(data.buffer);
 
     if (requestPath.startsWith(apiPath)) {
         requestPath = requestPath.substr(apiPath.length + 1);
 
-        if (data.method === 'POST' && requestPath === 'create-user') {
-            loginController.createUser(data, res);
-            return;
+        if (data.method === 'POST') {
+            if (requestPath === 'create-user') {
+                data.buffer = await getBodyData(req);
+                loginController.createUser(data, res);
+                return;
+            }
+            if (requestPath === 'login') {
+                data.buffer = await getBodyData(req);
+                loginController.login(data, res);
+            }
+            if (requestPath === 'create-file') {
+                data.buffer = await getBodyData(req);
+                loginController.isAuthorized(data, res, fileController.createFile)
+            }
         }
-        if (data.method === 'POST' && requestPath === 'login') {
-            loginController.login(data, res);
-        }
+
+
+
+
 
     } else {
         //servim aici un template pt web

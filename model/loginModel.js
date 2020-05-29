@@ -6,19 +6,16 @@ const jwt = require('jsonwebtoken')
 
 /*MODEL-EXPORTS-BEGIN*/
 async function insertUser(userInfo) {
-    let responseObject = { code: 201, message: '' };
+    let responseObject = { code: 201, message: 'Successfully Inserted' };
 
     let newUserCheck = await containsUser(userInfo);
 
     if (!(newUserCheck)) {
-        responseObject.message = 'There already exists a user with this username or this email';
-        responseObject.code = 409;
-        return responseObject;
+        return utilStol.getResponseObject(409, 'There already exists a user with this username or this email!');
     }
     let passwordHash = crypto.createHash('sha256').update(userInfo.password).digest('hex');
 
-    let status = await mongoSingelton.usersDB.insertOne({ "email": userInfo.email, "username": userInfo.username, "password": passwordHash });
-    responseObject.message = 'Successfully Inserted';
+    await mongoSingelton.usersDB.insertOne({ "email": userInfo.email, "username": userInfo.username, "password": passwordHash });
     return responseObject;
 }
 

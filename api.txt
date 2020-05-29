@@ -3,19 +3,30 @@
 
 POST /api/create-user
 
-{"username":"davidisimo040", password:"sadad", email??}
+{"username":"davidisimo040", password:"sadad", email:"ceva@blabla.com"}
 
--stocam inforamtiile in mongodb
+Raspuns:
+{"message":"Un mesaj care arata ce s-a intamplat"}
 
-raspuns status 201 resource created
+Status: 201 pentru succes, alt cod altfel si motivul erorii se gaseste in json in campul message
+
+
+------------------------------------------------------------------------------------------------------------------------
 
 POST /api/login
 
-body : {"username":"davidisimo040", password:"sadad", email??}
+body : {"username":"davidisimo040", password:"sadad", "email":"ceva@x.com"}
 
-response: -JWT token "sdadposkaopdk9.saiidhsaidj.saidadj90", 200 ok
-          - {"message":"invlid credentials"}, 401 unauthorized
+Optional: Unul din campurile email sau username poate lipsi
 
+Raspuns :
+{"message":"Un mesaj care arata ce s-a intamplat", "token":"token, daca logarea a avut succes"}
+
+Status:
+200 pentru succes, alt cod altfel si motivul erorii se gaseste in json in campul message
+
+
+------------------------------------------------------------------------------------------------------------------------
 
 
 
