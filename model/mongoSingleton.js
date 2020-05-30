@@ -3,7 +3,6 @@ const { MongoClient } = require('mongodb');
 class MongoSingleton {
     constructor() {
         const uri = "mongodb+srv://stol:drbirds@stol-8lwdg.mongodb.net/test?retryWrites=true&w=majority";
-
         this.client = new MongoClient(uri, { useUnifiedTopology: true });
     }
     async init() {

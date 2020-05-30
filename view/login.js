@@ -26,7 +26,7 @@ function submitLogin() {
                 window.localStorage.setItem('stol_token', response.token);
                 var f = document.createElement("form");
                 f.setAttribute('method', "get");
-                f.setAttribute('action', '/index');
+                f.setAttribute('action', '/home');
                 f.setAttribute('type', 'hidden');
                 document.body.appendChild(f);
                 f.submit();

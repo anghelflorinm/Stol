@@ -7,6 +7,8 @@ const mongoSingleton = require('./model/mongoSingleton')
 
 const loginController = require('./controller/loginController')
 const fileController = require('./controller/fileController');
+const userInfoController = require('./controller/userInfoController');
+const authController = require('./controller/authController');
 
 const options = {
     key: fs.readFileSync('key.pem'),
@@ -15,6 +17,7 @@ const options = {
 
 const hostname = 'localhost';
 const apiPath = 'api';
+const authPath = 'auth'
 const port = 3000;
 
 
@@ -59,21 +62,39 @@ const server = https.createServer(options, async function(req, res) {
             if (requestPath === 'login') {
                 data.buffer = await getBodyData(req);
                 loginController.login(data, res);
+                return;
             }
             if (requestPath === 'create-file') {
                 data.buffer = await getBodyData(req);
-                loginController.isAuthorized(data, res, fileController.createFile)
+                loginController.isAuthorized(data, res, fileController.createFile);
+                return;
             }
         }
-
-
-
-
-
-    } else {
-        //servim aici un template pt web
-        serveFrontend(data, res);
+        if (data.method === 'GET') {
+            if (requestPath === 'get-user-info') {
+                data.buffer = await getBodyData(req);
+                loginController.isAuthorized(data, res, userInfoController.getUserInfo);
+                return;
+            }
+        }
     }
+
+    if (requestPath.startsWith(authPath)) {
+        requestPath = requestPath.substr(authPath.length + 1);
+
+
+        if (data.method === 'GET') {
+            if (requestPath === 'google-drive') {
+                loginController.isAuthorized(data, res, authController.googleDriveRequestToken);
+                return;
+            }
+        }
+    }
+
+
+
+    //servim aici un template pt web
+    serveFrontend(data, res);
 
 });
 

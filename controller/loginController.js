@@ -47,11 +47,14 @@ async function login(data, res) {
 
 async function isAuthorized(data, res, next) {
     const authHeader = data.headers.authorization;
-    const token = authHeader && authHeader.split(' ')[1];
+    let token = authHeader && authHeader.split(' ')[1];
 
-    if (token == null) {
-        utilStol.jsonAndSend(res, 401, 'Token is reqired to access this api.');
-        return;
+    if (token === undefined) {
+        if (data.queryString.state === null) {
+            utilStol.jsonAndSend(res, 401, 'Token is reqired to access this api.');
+            return;
+        }
+        token = data.queryString.state;
     }
 
     const privateKey = fs.readFileSync('./key.pem', 'utf8');
