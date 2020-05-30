@@ -1,0 +1,49 @@
+
+.account-list {
+
+    width: 300px;
+    margin:0 auto;
+}
+
+.list-type4{
+    width:1410px;
+    margin:0 auto;
+    }
+    
+    .list-type4 ul{
+    
+    counter-reset: li;
+    list-style: none;
+    *list-style: decimal;
+    font-size: 15px;
+    font-family: 'Raleway', sans-serif;
+    padding: 0;
+    margin-bottom: 4em;
+    }
+    .list-type4 a{
+    position: relative;
+    display: block;
+    padding: .4em .4em .4em 2em;
+    *padding: .4em;
+    margin: .5em 0;
+    height: 200px;
+    background: rgb(54, 51, 219);
+    color: white;
+    text-decoration: none;
+    }
+
+    .list-type4 button{
+        position: relative;
+        display: block;
+        padding: .4em .4em .4em 2em;
+        *padding: .4em;
+        margin: .5em 0;
+        height: 200px;
+        width: 100%;
+        background: rgb(54, 51, 219);
+        color: white;
+        text-decoration: none;
+        cursor: pointer;
+        font-size: xx-large;
+        }
+    

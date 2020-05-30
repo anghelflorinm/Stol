@@ -90,7 +90,7 @@ function serveFrontend(data, res) {
     }
 
     if (data.requestPath === '') {
-        data.requestPath = 'index.html'
+        data.requestPath = 'home.html'
     }
 
     var filePath = './view/' + data.requestPath;

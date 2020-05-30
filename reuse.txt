@@ -14,3 +14,59 @@
 </body>
 
 <!html>
+
+background: linear-gradient(to-right, #ff105f,#ffad06);
+
+
+//////////////////////////////////home
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="home.css" type="text/css">
+    <title>STOL</title>
+</head>
+
+<body>
+    <div class="topnav" id="myTopnav">
+        <a href="#home" class="active">Home</a>
+        <a href="#news">News</a>
+        <a href="#contact">Contact</a>
+        <a href="#about">About</a>
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()">&#9776;</a>
+    </div>
+    <div class="banner">
+        <div class="banner-text">
+            <div class="banner-text-items">
+                <h2>Banner Text Heading</h2>
+                <p>
+                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ratione officiis beatae cupiditate laborum quas exercitationem fugit aliquam reiciendis natus impedit. Perferendis repellendus doloribus error corporis alias explicabo, harum a! Rerum.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="main1">
+            <h2>Main Heading One</h2>
+            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptas a, similique eligendi nesciunt voluptatem asperiores iste non aliquam, assumenda quaerat ducimus reiciendis culpa. Voluptatibus nemo repellat dolore nostrum quidem exercitationem?</p>
+        </div>
+    </div>
+
+    <div class="contact">
+        <div class="contact-text">
+            <div class="contact-items">
+                <h2>Contact Us</h2>
+                <input type="text" placeholder="Your Name">
+                <input type="text" placeholder="Your Email">
+                <textarea cols="20" rows="20" placeholder="Your message"></textarea>
+                <a href="#">Submit</a>
+            </div>
+        </div>
+    </div>
+    <script src="home.js">
+    </script>
+</body>
+
+</html>
