@@ -46,10 +46,6 @@ const server = https.createServer(options, async function(req, res) {
         request: req
     }
 
-
-
-    console.log(data.buffer);
-
     if (requestPath.startsWith(apiPath)) {
         requestPath = requestPath.substr(apiPath.length + 1);
 
@@ -84,8 +80,19 @@ const server = https.createServer(options, async function(req, res) {
 
 
         if (data.method === 'GET') {
-            if (requestPath === 'google-drive') {
-                loginController.isAuthorized(data, res, authController.googleDriveRequestToken);
+            if (requestPath === 'google_drive') {
+                data.tokenType = requestPath;
+                loginController.isAuthorized(data, res, authController.requestToken);
+                return;
+            }
+            if (requestPath === 'one_drive') {
+                data.tokenType = requestPath;
+                loginController.isAuthorized(data, res, authController.requestToken);
+                return;
+            }
+            if (requestPath === 'drop_box') {
+                data.tokenType = requestPath;
+                loginController.isAuthorized(data, res, authController.requestToken);
                 return;
             }
         }
