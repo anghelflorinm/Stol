@@ -132,15 +132,6 @@
   }
 
 
-  .hero{
-    height: 100%;
-    width: 100%;
-    background-image: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),url("images/login.png");
-    background-position: center;
-    background-size: cover;
-    position: absolute;
-}
-
 .paragraph{
 
   margin: 4rem;
@@ -172,4 +163,29 @@
   position: absolute;
   left: 35%;
   top: 10rem;
+}
+.large-text{
+  font-size: x-large;
+  margin-left: 4rem;
+}
+progress{
+  color: rgb(54, 51, 219);
+}
+progress[value] {
+  width: 500px;
+  height: 50px;
+  background-color: rgb(54, 51, 219);
+ 
+}
+
+#myProgress {
+  width: 25%;
+  background-color: grey;
+  margin-left: 3rem;
+}
+
+#myBar {
+  width: 1%;
+  height: 30px;
+  background-color: rgb(54, 51, 219);
 }
