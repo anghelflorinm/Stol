@@ -9,7 +9,9 @@
     
       
   }
-  
+  .right-items{
+    float: right;
+  }
   .title {
     font-size: 3rem;
     font: italic;
@@ -22,7 +24,7 @@
 }
 
   .topnav a {
-    float: right;
+    float: left;
     display: block;
     color: #f2f2f2;
     text-align: center;
@@ -148,7 +150,7 @@
 }
 .upload-btn{
 
-  width: 20%;
+  width: 22%;
   height: 3cm;
   background-color: rgb(54, 51, 219);
   color: white;
@@ -168,6 +170,6 @@
   border-left: 6px solid rgb(54, 51, 219);
   height: 100%;
   position: absolute;
-  left: 27%;
+  left: 35%;
   top: 10rem;
 }
