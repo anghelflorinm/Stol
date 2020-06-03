@@ -164,6 +164,9 @@
 }
 
 .vl {
-  border-left: 6px rgb(54, 51, 219);
+  border-left: 6px solid rgb(54, 51, 219);
   height: 100%;
+  position: absolute;
+  left: 27%;
+  top: 0;
 }
