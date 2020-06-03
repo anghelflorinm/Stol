@@ -138,3 +138,32 @@
     position: absolute;
 }
 
+.paragraph{
+
+  margin: 4rem;
+}
+.despartitor{
+  padding-top: 2rem;
+}
+.upload-btn{
+
+  width: 20%;
+  height: 3cm;
+  background-color: rgb(54, 51, 219);
+  color: white;
+  font-size: x-large;
+  font-style: italic;
+  
+    /*padding: 10px 30px;*/
+    cursor: pointer;
+    display: block;
+    margin: 3rem;
+    border: 0;
+    outline: none;
+    /*border-radius: 50px;*/
+}
+
+.vl {
+  border-left: 6px rgb(54, 51, 219);
+  height: 100%;
+}
