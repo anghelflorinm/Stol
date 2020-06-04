@@ -48,7 +48,7 @@ const server = https.createServer(options, async function(req, res) {
 
     if (requestPath.startsWith(apiPath)) {
         requestPath = requestPath.substr(apiPath.length + 1);
-
+        var splitPath = requestPath.split('/');
         if (data.method === 'POST') {
             if (requestPath === 'create-user') {
                 data.buffer = await getBodyData(req);
@@ -64,6 +64,11 @@ const server = https.createServer(options, async function(req, res) {
                 data.buffer = await getBodyData(req);
                 loginController.isAuthorized(data, res, fileController.createFile);
                 return;
+            }
+            if (requestPath.startsWith('upload-file') && splitPath.length === 2) {
+                //data.buffer = await getBodyData(req);
+                data.fileId = splitPath[1];
+                loginController.isAuthorized(data, res, fileController.uploadFile);
             }
         }
         if (data.method === 'GET') {
@@ -165,6 +170,7 @@ function getBodyData(req) {
         let buffer = '';
         req.on('data', chunk => {
             buffer += chunk.toString(); // convert Buffer to string
+            console.log(chunk.toString())
         });
         req.on('end', () => {
             resolve(buffer);

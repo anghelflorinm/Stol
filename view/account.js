@@ -12,10 +12,10 @@ function loginGD() {
 
 function loginOD() {
     const clientId = 'c3b5e5ee-a351-4e62-bd79-349c94392eb9';
-    const scope = 'profile openid offline_access onedrive.appfolder'
+    const scope = 'profile openid offline_access files.readwrite.all'
     const redirectUri = 'https://localhost:3000/auth/one_drive';
 
-    const requestUri = 'https://login.live.com/oauth20_authorize.srf?' + 'response_type=code&client_id=' + encodeURI(clientId) + '&redirect_uri=' + encodeURI(redirectUri) +
+    const requestUri = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize?' + 'response_type=code&client_id=' + encodeURI(clientId) + '&redirect_uri=' + encodeURI(redirectUri) +
         '&scope=' + encodeURI(scope) + '&access_type=offline&state=' + encodeURI(window.localStorage.getItem('stol_token'));
     window.location = requestUri;
 

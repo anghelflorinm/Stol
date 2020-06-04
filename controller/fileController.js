@@ -22,4 +22,11 @@ async function createFile(data, res) {
     return utilStol.jsonResponse(res, responseObject);
 }
 
-module.exports = { createFile }
+async function uploadFile(data, res) {
+    res.setHeader('Content-Type', 'aplication/json');
+    const userInfo = data.user;
+    const fileId = data.fileId;
+    let responseObject = await fileModel.uploadFile(userInfo, fileId, data);
+}
+
+module.exports = { createFile, uploadFile }

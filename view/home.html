@@ -9,46 +9,47 @@
 
 <body>
     <div>
-     <div class="topnav" id="myTopnav">
-        <div class="title">
-            STOL
+        <div class="topnav" id="myTopnav">
+            <div class="title">
+                STOL
+            </div>
+            <div class="right-items">
+                <a href="/home" class="active">Home</a>
+                <a href="/account">My account</a>
+                <a href="/logout">Log out</a>
+
+                <a href="javascript:void(0);" class="icon" onclick="myFunction()">&#9776;</a>
+            </div>
         </div>
-       <div class="right-items">
-        <a href="/home" class="active">Home</a>   
-        <a href="/account">My account</a>
-        <a href="/logout">Log out</a>
-        
-        <a href="javascript:void(0);" class="icon" onclick="myFunction()">&#9776;</a>
-    </div>
-     </div>
-     
+
         <div>
             <h1 class="paragraph">Bine ai venit, Florin!</h1>
         </div>
 
 
-     <div class="despartitor">
-
-        <button type="submit" class="upload-btn">UPLOAD FILE</button>
-
-     </div>
+        <div class="despartitor">
+            <button class="upload-btn" onclick="document.getElementById('getFile').click()">UPLOAD FILE</button>
+            <input type="file" id="getFile"></input>
+        </div>
         <div class="large-text">
-     
-    <progress id="file" value="66" max="100">66%</progress>
-    <p id="myP">Used <span id="demo">3GB</span> of 10GB</p>
+
+            <progress id="file" value="66" max="100">66%</progress>
+            <p id="myP">Used <span id="demo">3GB</span> of 10GB</p>
         </div>
 
         <h1 class="paragraph">Available GB</h1>
         <div onclick="move()" id="myProgress">
             <div id="myBar"></div>
-          </div>
-          <br>
+        </div>
+        <br>
 
 
-    <div class="vl"></div>
-    <script src="home.js">
-    </script>
- </div>
+        <div class="vl"></div>
+        <script src="home.js">
+        </script>
+        <script src="authorizeUser.js">
+        </script>
+    </div>
 </body>
 
 </html>
