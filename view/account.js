@@ -1,3 +1,36 @@
+var loginData = { token: window.localStorage.getItem('stol_token') };
+
+function myFunction() {
+    var x = document.getElementById("myTopnav");
+    if (x.className === "topnav") {
+        x.className += " responsive";
+    } else {
+        x.className = "topnav";
+    }
+}
+
+var i = 0;
+
+function move() {
+    if (i == 0) {
+        i = 1;
+        var elem = document.getElementById("myBar");
+        var width = 1;
+        var id = setInterval(frame, 10);
+
+        function frame() {
+            if (width >= 100) {
+                clearInterval(id);
+                i = 0;
+            } else {
+                width++;
+                elem.style.width = width + "%";
+            }
+        }
+    }
+}
+
+
 function loginGD() {
 
     const clientId = '1078202946949-6vjgaicg03i1cbpj9keebrsfg2mp2er7.apps.googleusercontent.com';
@@ -29,3 +62,4 @@ function loginDB() {
         '&state=' + encodeURI(window.localStorage.getItem('stol_token'));
     window.location = requestUri;
 }
+
