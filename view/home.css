@@ -9,6 +9,7 @@
 .topnav {
     background-color: rgb(54, 51, 219);
     overflow: hidden;
+    height: 7rem;
 }
 
 .right-items {
@@ -193,7 +194,7 @@
     height: 100%;
     position: absolute;
     left: 35%;
-    top: 10rem;
+    top: 7rem;
 }
 
 .large-text {
@@ -221,4 +222,30 @@ progress[value] {
     width: 1%;
     height: 30px;
     background-color: rgb(54, 51, 219);
+}
+
+ul{
+    margin-top: 0;
+    margin-left: 40%;
+}
+ul li{
+    list-style: none;
+}
+.column {
+    flex: 50%;
+    height: 0;
+}
+
+button{
+    background-color: rgb(54, 51, 219);
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    width: 800px;
+    font-size: xx-large;
 }

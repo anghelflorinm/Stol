@@ -10,6 +10,7 @@ async function getUserInfo(userInfo) {
         return utilStol.getResponseObject(404, 'This user is no longer found here!');
     }
 
+
 }
 
 module.exports = {};

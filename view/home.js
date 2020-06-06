@@ -1,3 +1,4 @@
+
 var loginData = { token: window.localStorage.getItem('stol_token') };
 
 function myFunction() {
@@ -47,7 +48,7 @@ document.getElementById('getFile').addEventListener('change', function createFil
     createRequest.open('POST', '/api/create-file');
     createRequest.setRequestHeader('Authorization', 'Bearer ' + loginData.token);
 
-    createRequest.onreadystatechange = function() {
+    createRequest.onreadystatechange = function () {
         if (createRequest.readyState === 4) {
             if (createRequest.status === 201) {
                 var response = JSON.parse(createRequest.responseText);
@@ -76,3 +77,32 @@ function uploadFile(fileObject, file_id) {
 
     alert('finished!');
 }
+
+
+
+var toppings = ["Tomato", "Cheese", "Pepperoni", 
+                "Olives", "Jalapenos", "Pineapple", "Ham"];
+
+
+var ul = document.querySelector("ul");
+for (var i = 0; i < toppings.length; i++) {
+  var topping = toppings[i];
+
+  var listItem = document.createElement("li");
+  var listbtn = document.createElement("button");
+  listbtn.textContent = topping;
+
+  ul.appendChild(listItem);
+  ul.appendChild(listbtn);
+}
+
+/*
+Db.users.find({ user_id: loginData.token }).forEach(function (item) {
+    var listItem = document.createElement("li");
+    var listbtn = document.createElement("button");
+    listbtn.textContent = item.username;
+
+    ul.appendChild(listItem);
+    ul.appendChild(listbtn);
+
+});*/
