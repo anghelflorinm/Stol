@@ -6,6 +6,9 @@ const jwt = require('jsonwebtoken')
 
 async function getUserInfo(data, res) {
     res.setHeader('Content-Type', 'aplication/json');
+    const userInfo = data.user;
+
+
     utilStol.jsonAndSend(res, 200, "Valid User!");
 }
 
