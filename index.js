@@ -77,6 +77,11 @@ const server = https.createServer(options, async function(req, res) {
                 loginController.isAuthorized(data, res, userInfoController.getUserInfo);
                 return;
             }
+            if (requestPath.startsWith('download-file') && splitPath.length === 2) {
+                data.fileId = splitPath[1];
+                loginController.isAuthorized(data, res, fileController.getFile);
+                return;
+            }
         }
     }
 

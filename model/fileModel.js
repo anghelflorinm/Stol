@@ -390,4 +390,205 @@ async function uploadPartOneDriveResumable(fileId, filePart, contentBuffer, buff
     req.end();
 }
 
-module.exports = { insertFile, uploadFile };
+async function downloadFile(userInfo, fileId, res) {
+    var userData = await mongoSingelton.usersDB.findOne({ _id: ObjectID(userInfo._id) });
+
+
+
+    var fileInfo = await mongoSingelton.filesDB.findOne({ _id: ObjectID(fileId), 'user_id': ObjectID(userInfo._id) });
+    if (fileInfo == null) {
+        utilStol.jsonAndSend(res, 404, 'File not found!');
+        return;
+    }
+    if (fileInfo.created == false) {
+        utilStol.jsonAndSend(res, 404, 'File not created!');
+        return;
+    }
+
+    var accessTokens = {};
+
+    if (userData.hasOwnProperty('drop_box_access_token')) {
+        accessTokens.drop_box = userData.drop_box_access_token;
+    }
+
+    if (userData.hasOwnProperty('google_drive_access_token')) {
+        accessTokens.google_drive = await authModel.getNewAccessToken(userInfo._id, userData.google_drive_refresh_token, 'google_drive');
+    }
+
+    if (userData.hasOwnProperty('one_drive_access_token')) {
+        accessTokens.one_drive = await authModel.getNewAccessToken(userInfo._id, userData.one_drive_refresh_token, 'one_drive');
+    }
+
+
+
+    var fileParts = await mongoSingelton.filePartsDB.find({ 'file_id': ObjectID(fileId) }).sort({ 'file_part': 1 }).toArray();
+    var result = true;
+    for (var i = 0; i < fileParts.length; i++) {
+        switch (fileParts[i].type) {
+            case "google_drive":
+                result = await downloadFilePartGoogleDrive(fileParts[i].cloud_id, res, accessTokens.google_drive, fileParts[i].file_hash);
+                break;
+            case "one_drive":
+                result = await downloadFilePartOneDrive(fileParts[i].cloud_id, res, accessTokens.one_drive, fileParts[i].file_hash);
+                break;
+            case "drop_box":
+                result = await donwloadFilePartDropbox(fileParts[i].cloud_id, res, accessTokens.drop_box, fileParts[i].file_hash);
+                break;
+        }
+    }
+    res.end();
+}
+
+function downloadFilePartOneDrive(id, res, accessToken, requiredMd5Hash) {
+    return new Promise(function(resolve, reject) {
+        const bearer = 'Bearer ' + accessToken;
+        const filePath = '/v1.0/me/drive/items/' + id + '/content';
+        var options = {
+            method: 'GET',
+            host: 'graph.microsoft.com',
+            path: filePath,
+            headers: {
+                'Authorization': bearer
+            }
+        }
+        let ok = true;
+        var req = https.request(options, (response) => {
+            response.on('data', (chunk) => {
+
+            });
+            response.on('end', () => {
+                if (response.statusCode == 302) {
+                    /*const md5Hash = crypto.createHash('md5').update(buffer).digest('hex');
+                    if (md5Hash != requiredMd5Hash) {
+                        ok = false;
+                    }
+                    res.write(buffer, 'binary');*/
+                    var redirectURL = response.headers.location;
+                    const parsedURL = url.parse(redirectURL, true);
+                    const requestPath = parsedURL.pathname;
+                    const requestHost = parsedURL.hostname;
+                    var fileRequest = https.request({ method: 'GET', host: requestHost, path: requestPath }, (fileResponse) => {
+                        let buffer = Buffer.from('');
+                        fileResponse.on('data', (chunk) => {
+                            buffer = Buffer.concat([buffer, chunk]);
+                        });
+                        fileResponse.on('end', () => {
+                            if (fileResponse.statusCode === 200) {
+                                const md5Hash = crypto.createHash('md5').update(buffer).digest('hex');
+                                if (md5Hash != requiredMd5Hash) {
+                                    ok = false;
+                                }
+                                res.write(buffer, 'binary');
+                            } else {
+                                ok = false;
+                            }
+                            resolve(ok);
+                        });
+
+                    });
+                    fileRequest.end();
+                } else {
+                    ok = false;
+                    resolve(ok);
+                }
+            });
+        });
+        req.end();
+    });
+}
+
+function donwloadFilePartDropbox(id, res, accessToken, requiredMd5Hash) {
+    return new Promise(function(resolve, reject) {
+        const bearer = 'Bearer ' + accessToken;
+        var fileMetadata = {
+            "path": id
+        }
+
+        var options = {
+            method: 'POST',
+            host: 'content.dropboxapi.com',
+            path: '/2/files/download',
+            headers: { 'Authorization': bearer, 'Dropbox-API-Arg': JSON.stringify(fileMetadata) }
+        }
+        var ok = true;
+        var req = https.request(options, response => {
+            let buffer = Buffer.from('');
+            response.on('data', chunk => {
+                buffer = Buffer.concat([buffer, chunk])
+            });
+            response.on('end', () => {
+                //console.log(buffer.toString());
+                if (response.statusCode === 200) {
+                    const md5Hash = crypto.createHash('md5').update(buffer).digest('hex');
+                    if (md5Hash != requiredMd5Hash) {
+                        ok = false;
+                    }
+                    res.write(buffer, 'binary');
+                } else {
+                    ok = false;
+                }
+                resolve(ok);
+            });
+        });
+        req.end();
+    });
+}
+
+function downloadFilePartGoogleDrive(id, res, accessToken, requiredMd5Hash) {
+    return new Promise(function(resolve, reject) {
+        const bearer = 'Bearer ' + accessToken;
+        const filePath = '/drive/v2/files/' + id;
+        var options = {
+            method: 'GET',
+            host: 'www.googleapis.com',
+            path: filePath,
+            headers: {
+                'Authorization': bearer
+            }
+        }
+        let ok = true;
+        var req = https.request(options, (response) => {
+            var jsonString = '';
+            response.on('data', (chunk) => {
+                jsonString += chunk;
+            });
+            response.on('end', () => {
+                console.log(jsonString);
+                if (response.statusCode == 200) {
+                    var responseObject = JSON.parse(jsonString);
+                    var redirectURL = responseObject.downloadUrl;
+                    const parsedURL = url.parse(redirectURL, true);
+                    const requestPath = parsedURL.pathname + parsedURL.search;
+                    const requestHost = parsedURL.hostname;
+                    var fileRequest = https.request({ method: 'GET', host: requestHost, path: requestPath, headers: { 'Authorization': bearer } }, (fileResponse) => {
+                        let buffer = Buffer.from('');
+                        fileResponse.on('data', (chunk) => {
+                            buffer = Buffer.concat([buffer, chunk]);
+                        });
+                        fileResponse.on('end', () => {
+                            //console.log(buffer.toString());
+                            if (fileResponse.statusCode === 200) {
+                                const md5Hash = crypto.createHash('md5').update(buffer).digest('hex');
+                                if (md5Hash != requiredMd5Hash) {
+                                    ok = false;
+                                }
+                                res.write(buffer, 'binary');
+                            } else {
+                                ok = false;
+                            }
+                            resolve(ok);
+                        });
+
+                    });
+                    fileRequest.end();
+                } else {
+                    ok = false;
+                    resolve(ok);
+                }
+            });
+        });
+        req.end();
+    });
+}
+
+module.exports = { insertFile, uploadFile, downloadFile };

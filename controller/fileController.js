@@ -29,4 +29,11 @@ async function uploadFile(data, res) {
     let responseObject = await fileModel.uploadFile(userInfo, fileId, data);
 }
 
-module.exports = { createFile, uploadFile }
+async function getFile(data, res) {
+    res.setHeader('Content-Type', 'application/octet-stream');
+    const userInfo = data.user;
+    const fileId = data.fileId;
+    fileModel.downloadFile(userInfo, fileId, res);
+}
+
+module.exports = { createFile, uploadFile, getFile }
