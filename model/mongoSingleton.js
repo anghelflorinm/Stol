@@ -12,7 +12,7 @@ class MongoSingleton {
         this.db = this.client.db('Stol');
         this.usersDB = this.db.collection('users');
         this.filesDB = this.db.collection('files');
-        this.filePartsDB = this.db.collection('fileParts')
+        this.filePartsDB = this.db.collection('fileParts');
     }
 }
 
