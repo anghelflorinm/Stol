@@ -27,6 +27,7 @@ async function uploadFile(data, res) {
     const userInfo = data.user;
     const fileId = data.fileId;
     let responseObject = await fileModel.uploadFile(userInfo, fileId, data);
+    utilStol.jsonResponse(res, responseObject);
 }
 
 async function getFile(data, res) {

@@ -393,8 +393,6 @@ async function uploadPartOneDriveResumable(fileId, filePart, contentBuffer, buff
 async function downloadFile(userInfo, fileId, res) {
     var userData = await mongoSingelton.usersDB.findOne({ _id: ObjectID(userInfo._id) });
 
-
-
     var fileInfo = await mongoSingelton.filesDB.findOne({ _id: ObjectID(fileId), 'user_id': ObjectID(userInfo._id) });
     if (fileInfo == null) {
         utilStol.jsonAndSend(res, 404, 'File not found!');
