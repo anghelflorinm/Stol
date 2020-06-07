@@ -83,6 +83,13 @@ const server = https.createServer(options, async function(req, res) {
                 return;
             }
         }
+        if (data.method === 'DELETE') {
+            if (requestPath.startsWith('delete-file') && splitPath.length === 2) {
+                data.fileId = splitPath[1];
+                loginController.isAuthorized(data, res, fileController.deleteFile);
+                return;
+            }
+        }
     }
 
     if (requestPath.startsWith(authPath)) {

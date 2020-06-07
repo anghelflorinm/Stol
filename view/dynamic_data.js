@@ -74,6 +74,15 @@ function dynamic_data(response) {
 
             delbtn.onclick = function() {
                 console.log(this.parentElement);
+                const url = '/api/delete-file/' + this.parentElement.id;
+                const authHeader = 'Bearer ' + loginData.token;
+                const options = {
+                    method: 'DELETE',
+                    headers: {
+                        Authorization: authHeader
+                    }
+                };
+                fetch(url, options);
                 this.parentElement.remove();
 
             };

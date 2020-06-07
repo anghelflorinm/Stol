@@ -592,4 +592,124 @@ function downloadFilePartGoogleDrive(id, res, accessToken, requiredMd5Hash) {
     });
 }
 
-module.exports = { insertFile, uploadFile, downloadFile };
+async function deleteFile(userInfo, fileId) {
+    var userData = await mongoSingelton.usersDB.findOne({ _id: ObjectID(userInfo._id) });
+
+    var fileInfo = await mongoSingelton.filesDB.findOne({ _id: ObjectID(fileId), 'user_id': ObjectID(userInfo._id) });
+
+    if (fileInfo == null) {
+        return utilStol.getResponseObject(res, 404, 'File not found!');
+    }
+
+    var accessTokens = {};
+
+    if (userData.hasOwnProperty('drop_box_access_token')) {
+        accessTokens.drop_box = userData.drop_box_access_token;
+    }
+
+    if (userData.hasOwnProperty('google_drive_access_token')) {
+        accessTokens.google_drive = await authModel.getNewAccessToken(userInfo._id, userData.google_drive_refresh_token, 'google_drive');
+    }
+
+    if (userData.hasOwnProperty('one_drive_access_token')) {
+        accessTokens.one_drive = await authModel.getNewAccessToken(userInfo._id, userData.one_drive_refresh_token, 'one_drive');
+    }
+
+    var fileParts = await mongoSingelton.filePartsDB.find({ 'file_id': ObjectID(fileId) }).sort({ 'file_part': 1 }).toArray();
+
+    for (var i = 0; i < fileParts.length; i++) {
+        switch (fileParts[i].type) {
+            case "google_drive":
+                // result = await downloadFilePartGoogleDrive(fileParts[i].cloud_id, res, accessTokens.google_drive, fileParts[i].file_hash);
+                deleteFileGoogleDrive(fileParts[i].cloud_id, accessTokens.google_drive);
+                break;
+            case "one_drive":
+                deleteFileOneDrive(fileParts[i].cloud_id, accessTokens.one_drive)
+                break;
+            case "drop_box":
+                // result = await donwloadFilePartDropbox(fileParts[i].cloud_id, res, accessTokens.drop_box, fileParts[i].file_hash);
+                deleteFileDropBox(fileParts[i].cloud_id, accessTokens.drop_box);
+                break;
+        }
+    }
+    mongoSingelton.filePartsDB.deleteMany({ "file_id": fileId });
+    mongoSingelton.filesDB.deleteOne({ "_id": ObjectID(fileId) });
+    return utilStol.getResponseObject(200, 'File Deleted');
+}
+
+async function deleteFileGoogleDrive(id, accessToken) {
+    const bearer = 'Bearer ' + accessToken;
+    const filePath = '/drive/v2/files/' + id;
+    var options = {
+        method: 'DELETE',
+        host: 'www.googleapis.com',
+        path: filePath,
+        headers: {
+            'Authorization': bearer
+        }
+    }
+    var req = https.request(options, res => {
+        var message = ''
+        res.on('data', (chunk) => {
+            message += chunk;
+        });
+        res.on('end', () => {
+            console.log(message);
+            console.log(res.statusCode);
+        })
+    })
+    req.end();
+}
+
+async function deleteFileOneDrive(id, accessToken) {
+    const bearer = 'Bearer ' + accessToken;
+    const filePath = '/v1.0/me/drive/items/' + id;
+    var options = {
+        method: 'DELETE',
+        host: 'graph.microsoft.com',
+        path: filePath,
+        headers: {
+            'Authorization': bearer
+        }
+    }
+    var req = https.request(options, res => {
+        var message = ''
+        res.on('data', (chunk) => {
+            message += chunk;
+        });
+        res.on('end', () => {
+            console.log(message);
+            console.log(res.statusCode);
+        })
+    });
+    req.end();
+}
+
+async function deleteFileDropBox(id, accessToken) {
+    const bearer = 'Bearer ' + accessToken;
+    var fileMetadata = {
+        "path": id
+    }
+
+    var options = {
+        method: 'POST',
+        host: 'api.dropboxapi.com',
+        path: '/2/files/delete_v2',
+        headers: { 'Content-Type': 'application/json', 'Authorization': bearer }
+    }
+
+    var req = https.request(options, res => {
+        var message = ''
+        res.on('data', (chunk) => {
+            message += chunk;
+        });
+        res.on('end', () => {
+            console.log(message);
+            console.log(res.statusCode);
+        })
+    });
+    req.write(JSON.stringify(fileMetadata));
+    req.end();
+}
+
+module.exports = { insertFile, uploadFile, downloadFile, deleteFile };

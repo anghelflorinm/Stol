@@ -37,4 +37,12 @@ async function getFile(data, res) {
     fileModel.downloadFile(userInfo, fileId, res);
 }
 
-module.exports = { createFile, uploadFile, getFile }
+async function deleteFile(data, res) {
+    res.setHeader('Content-Type', 'aplication/json');
+    const userInfo = data.user;
+    const fileId = data.fileId;
+    let responseObject = await fileModel.deleteFile(userInfo, fileId, data);
+    utilStol.jsonResponse(res, responseObject);
+}
+
+module.exports = { createFile, uploadFile, getFile, deleteFile }
