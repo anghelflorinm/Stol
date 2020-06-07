@@ -1,17 +1,14 @@
-
 .account-list {
-
     width: 300px;
-    margin:0 auto;
+    margin: 0 auto;
 }
 
-.list-type4{
-    width:1410px;
-    margin:0 auto;
-    }
-    
-    .list-type4 ul{
-    
+.list-type4 {
+    width: 1410px;
+    margin: 0 auto;
+}
+
+.list-type4 ul {
     counter-reset: li;
     list-style: none;
     *list-style: decimal;
@@ -19,49 +16,39 @@
     font-family: 'Raleway', sans-serif;
     padding: 0;
     margin-bottom: 4em;
-    }
-    .list-type4 a{
+    margin-left: 0;
+}
+
+.list-type4 button {
     position: relative;
     display: block;
     padding: .4em .4em .4em 2em;
     *padding: .4em;
     margin: .5em 0;
     height: 200px;
+    width: 100%;
     background: rgb(54, 51, 219);
     color: white;
     text-decoration: none;
-    }
+    cursor: pointer;
+    font-size: xx-large;
+}
 
-    .list-type4 button{
-        position: relative;
-        display: block;
-        padding: .4em .4em .4em 2em;
-        *padding: .4em;
-        margin: .5em 0;
-        height: 200px;
-        width: 100%;
-        background: rgb(54, 51, 219);
-        color: white;
-        text-decoration: none;
-        cursor: pointer;
-        font-size: xx-large;
-        }
-    
-    .btn {
-            border: 2px solid black;
-            background-color: white;
-            color: black;
-            padding: 14px 28px;
-            font-size: 16px;
-            cursor: pointer;
-          }
-          
-          .success {
-            border-color: #4CAF50;
-            color: green;
-          }
-          
-          .danger {
-            border-color: #f44336;
-            color: red
-          }
+.btn {
+    border: 2px solid black;
+    background-color: white;
+    color: black;
+    padding: 14px 28px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.success {
+    border-color: #4CAF50;
+    color: green;
+}
+
+.danger {
+    border-color: #f44336;
+    color: red
+}

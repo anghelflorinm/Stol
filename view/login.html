@@ -13,20 +13,19 @@
                 <button type="button" class="toggle-btn" onclick="login()">Log in</button>
                 <button type="button" class="toggle-btn" onclick="register()">Register</button>
             </div>
-            <div class="social-icons">
-                <img src="images/fb.png">
-                <img src="images/gg.png">
-            </div>
+
             <form id="login" class="input-group" onsubmit="submitLogin(); return false;">
                 <input id="loginUsername" type="text" class="input-field" placeholder="Username" required>
                 <input id="loginPassword" type="password" class="input-field" placeholder="Password" required>
-                <input type="checkbox" class="check-box"><span>Remember Password</span>
+                <p id="demo" class="invalid-log"></p>
                 <button type="submit" class="submit-btn">Log in</button>
+
             </form>
             <form id="register" class="input-group">
                 <input type="text" class="input-field" placeholder="Username" required>
                 <input type="text" class="input-field" placeholder="Email" required>
                 <input type="text" class="input-field" placeholder="Password" required>
+                <p id="demo" class="invalid-log"></p>
                 <input type="checkbox" class="check-box"><span>I agree to the terms and conditions</span>
                 <button type="submit" class="submit-btn">Register</button>
             </form>

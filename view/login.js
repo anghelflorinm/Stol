@@ -20,7 +20,7 @@ function submitLogin() {
     const url = '/api/login';
     xhr.open('POST', url, true);
     xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
+        if (xhr.readyState === 4) {
             if (xhr.status === 200) {
                 var response = JSON.parse(xhr.responseText);
                 window.localStorage.setItem('stol_token', response.token);
@@ -32,7 +32,10 @@ function submitLogin() {
                 f.submit();
             } else {
 
+                document.getElementById("demo").innerHTML = "wrong username or password";
             }
+
+        } else {
 
         }
     }
