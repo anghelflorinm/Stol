@@ -32,7 +32,7 @@ function submitLogin() {
                 f.submit();
             } else {
 
-                document.getElementById("demo").innerHTML = "wrong username or password";
+                document.getElementById("demo1").innerHTML = "wrong username or password";
             }
 
         } else {
@@ -60,7 +60,7 @@ function submitRegister() {
                 f.submit();
             } else {
 
-                document.getElementById("demo").innerHTML = "wrong username or password";
+                document.getElementById("demo2").innerHTML = "username or email already used";
             }
 
         } else {

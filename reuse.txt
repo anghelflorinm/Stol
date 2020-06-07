@@ -1,57 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
+return new Promise(async function(resolve, reject) {
+        let responseObject = { code: 200, message: 'Authentication Successful!!!' };
+        let passwordHash = crypto.createHash('sha256').update(userInfo.password).digest('hex');
+        let result = await mongoSingelton.usersDB.findOne({ $or: [{ "username": userInfo.username }, { "email": userInfo.email }], "password": passwordHash });
+        if (result == null) {
+            resolve(utilStol.getResponseObject(401, 'Wrong username/email or password'));
+        }
 
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="home.css" type="text/css">
-    <title>STOL</title>
-</head>
+        let userData = { _id: result._id.toHexString(), username: result.username, email: result.email };
 
-<body>
-    <div>
-        <div class="topnav" id="myTopnav">
-            <div class="title">
-                STOL
-            </div>
-            <div class="right-items">
-                <a href="/home" class="active">Home</a>
-                <a href="/account">My account</a>
-                <a href="/logout">Log out</a>
+        let privateKey = fs.readFileSync('./key.pem', 'utf8');
 
-                <a href="javascript:void(0);" class="icon" onclick="myFunction()">&#9776;</a>
-            </div>
-        </div>
+        let token = jwt.sign(userData, privateKey, { algorithm: 'HS256', expiresIn: '2h' });
 
-        <div>
-            <h1 class="paragraph">Bine ai venit, Florin!</h1>
-        </div>
-
-        <ul>
-            <li>item 1</li>
-            <li>item 2</li>
-        </ul>
-        <div class="despartitor">
-            <button class="upload-btn" onclick="document.getElementById('getFile').click()">UPLOAD FILE</button>
-            <input type="file" id="getFile"></input>
-        </div>
-        <div class="large-text">
-
-            <progress id="file" value="66" max="100">66%</progress>
-            <p id="myP">Used <span id="demo">3GB</span> of 10GB</p>
-        </div>
-
-        <h1 class="paragraph">Available GB</h1>
-        <div onclick="move()" id="myProgress">
-            <div id="myBar"></div>
-        </div>
-        <br>
-        
-        <div class="vl"></div>
-        <script src="home.js">
-        </script>
-        <script src="authorizeUser.js">
-        </script>
-    </div>
-</body>
-
-</html>
+        responseObject.token = token;
+        resolve(responseObject);
+    })

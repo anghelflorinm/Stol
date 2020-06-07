@@ -16,11 +16,17 @@ async function insertUser(userInfo) {
     let passwordHash = crypto.createHash('sha256').update(userInfo.password).digest('hex');
 
     await mongoSingelton.usersDB.insertOne({ "email": userInfo.email, "username": userInfo.username, "password": passwordHash });
+
+    let loginInfo = await loginUser(userInfo);
+    var token = loginInfo.token;
+    responseObject.token = token;
+
     return responseObject;
 }
 
 
 async function loginUser(userInfo) {
+
     let responseObject = { code: 200, message: 'Authentication Successful!!!' };
     let passwordHash = crypto.createHash('sha256').update(userInfo.password).digest('hex');
     let result = await mongoSingelton.usersDB.findOne({ $or: [{ "username": userInfo.username }, { "email": userInfo.email }], "password": passwordHash });
@@ -36,6 +42,7 @@ async function loginUser(userInfo) {
 
     responseObject.token = token;
     return responseObject;
+
 }
 
 module.exports = { insertUser, loginUser };
@@ -44,7 +51,7 @@ module.exports = { insertUser, loginUser };
 
 async function containsUser(userInfo) {
     return new Promise(function(resolve, reject) {
-        mongoSingelton.usersDB.findOne({ $or: [{ "username": userInfo.username }, { "email": userInfo.username }] }, (err, result) => {
+        mongoSingelton.usersDB.findOne({ $or: [{ "username": userInfo.username }, { "email": userInfo.email }] }, (err, result) => {
             if (err) throw err;
 
             if (result != null) {
