@@ -1,5 +1,5 @@
 const xhr = new XMLHttpRequest();
-xhr.onload = function () {
+xhr.onload = function() {
     if (this.status == 200) {
         try {
             const response = JSON.parse(this.responseText);
@@ -30,11 +30,39 @@ function dynamic_data(response) {
             var file_ = files[i].filename;
 
             var listItem = document.createElement("li");
-            var listbtn = document.createElement("button");
-            listbtn.textContent = file_;
 
+            listItem.setAttribute("id", files[i]._id);
+
+            var downbtn = document.createElement("button");
+            var delbtn = document.createElement("button");
+
+            downbtn.className = "download-btn";
+            downbtn.textContent = "DOWNLOAD";
+
+            delbtn.className = "delete-btn";
+            delbtn.textContent = "DELETE";
+
+            downbtn.onclick = function() {
+                console.log(this.parentElement);
+
+                const createRequest = new XMLHttpRequest();
+                createRequest.open('GET', '/api/download-file/' + files[i]._id);
+                createRequest.setRequestHeader('Authorization', 'Bearer ' + loginData.token);
+
+            };
+
+            delbtn.onclick = function() {
+                console.log(this.parentElement);
+                this.parentElement.remove();
+
+            };
+
+            listItem.innerHTML = "<button class=\"dynamic-btn\">" + file_ + "</button>";
             ul.appendChild(listItem);
-            ul.appendChild(listbtn);
+            listItem.appendChild(downbtn);
+            listItem.appendChild(delbtn);
+
+
         }
     }
     var dynamic_username = response.username;

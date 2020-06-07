@@ -10,8 +10,6 @@ async function getUserInfo(data, res) {
     var responseObject = await userInfoModel.getUserInfo(userInfo);
     utilStol.jsonResponse(res, responseObject);
 
-
-    //utilStol.jsonAndSend(res, 200, "Valid User!");
 }
 
 module.exports = { getUserInfo };
