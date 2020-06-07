@@ -224,19 +224,21 @@ progress[value] {
     background-color: rgb(54, 51, 219);
 }
 
-ul{
+ul {
     margin-top: 0;
     margin-left: 40%;
 }
-ul li{
+
+ul li {
     list-style: none;
 }
+
 .column {
     flex: 50%;
     height: 0;
 }
 
-button{
+.dynamic-btn {
     background-color: rgb(54, 51, 219);
     border: none;
     color: white;
@@ -248,4 +250,26 @@ button{
     margin: 4px 2px;
     width: 800px;
     font-size: xx-large;
+}
+
+.download-btn {
+    border: 2px solid black;
+    padding: 14px 28px;
+    font-size: 16px;
+    cursor: pointer;
+    border-color: #4CAF50;
+    color: green;
+    width: auto;
+    height: auto;
+}
+
+.delete-btn {
+    border: 2px solid black;
+    padding: 14px 28px;
+    font-size: 16px;
+    cursor: pointer;
+    width: auto;
+    height: auto;
+    border-color: #f44336;
+    color: red
 }

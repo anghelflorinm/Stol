@@ -47,7 +47,7 @@ document.getElementById('getFile').addEventListener('change', function createFil
     createRequest.open('POST', '/api/create-file');
     createRequest.setRequestHeader('Authorization', 'Bearer ' + loginData.token);
 
-    createRequest.onreadystatechange = function () {
+    createRequest.onreadystatechange = function() {
         if (createRequest.readyState === 4) {
             if (createRequest.status === 201) {
                 var response = JSON.parse(createRequest.responseText);

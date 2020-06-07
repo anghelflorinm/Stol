@@ -62,4 +62,3 @@ function loginDB() {
         '&state=' + encodeURI(window.localStorage.getItem('stol_token'));
     window.location = requestUri;
 }
-
