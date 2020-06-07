@@ -4,6 +4,7 @@ xhr.onload = function() {
         try {
             const response = JSON.parse(this.responseText);
             dynamic_data(response);
+            loginInformation(response);
             console.log(response);
 
         } catch (e) {
@@ -44,12 +45,6 @@ function dynamic_data(response) {
 
             downbtn.onclick = function() {
                 console.log(this.parentElement);
-
-                /*const createRequest = new XMLHttpRequest();
-                createRequest.open('GET', '/api/download-file/' + files[i]._id);
-                createRequest.setRequestHeader('Authorization', 'Bearer ' + loginData.token);*/
-                //console.log(this.parentElement.getElementsByClassName('dynamic-btn'));
-                //console.log(this.parentElement.getElementsByClassName('dynamic-btn')[0].innerText);
                 const url = '/api/download-file/' + this.parentElement.id;
                 const authHeader = 'Bearer ' + loginData.token;
                 const options = {
@@ -68,7 +63,6 @@ function dynamic_data(response) {
                     a.download = filename;
                     a.click();
                     window.URL.revokeObjectURL(url);
-                    //window.location.assign(filename);
                 })
             };
 
@@ -101,5 +95,46 @@ function dynamic_data(response) {
     usernameData.textContent = dynamic_username;
     put_dynamic_username.appendChild(usernameData);
 
+
+}
+
+function loginInformation(response) {
+
+    var GDaccount = response.connected_google_drive;
+    var DBaccount = response.connected_drop_box;
+    var ODaccount = response.connected_one_drive;
+
+    var div1 = document.getElementById("GDA");
+    var btn1 = document.createElement("button");
+    if (GDaccount === true) {
+        btn1.textContent = "LOGGED IN";
+        btn1.setAttribute("id", "bb1");
+    } else {
+        btn1.textContent = "UNLOGGED";
+        btn1.setAttribute("id", "bb2");
+    }
+    div1.appendChild(btn1);
+
+    var div2 = document.getElementById("ODA");
+    var btn2 = document.createElement("button");
+    if (ODaccount === true) {
+        btn2.textContent = "LOGGED IN";
+        btn2.setAttribute("id", "bb1");
+    } else {
+        btn2.textContent = "UNLOGGED";
+        btn2.setAttribute("id", "bb2");
+    }
+    div2.appendChild(btn2);
+
+    var div3 = document.getElementById("DBA");
+    var btn3 = document.createElement("button");
+    if (DBaccount === true) {
+        btn3.textContent = "LOGGED IN";
+        btn3.setAttribute("id", "bb1");
+    } else {
+        btn3.textContent = "UNLOGGED";
+        btn3.setAttribute("id", "bb2");
+    }
+    div3.appendChild(btn3);
 
 }
