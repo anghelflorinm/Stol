@@ -69,6 +69,7 @@ const server = https.createServer(options, async function(req, res) {
                 //data.buffer = await getBodyData(req);
                 data.fileId = splitPath[1];
                 loginController.isAuthorized(data, res, fileController.uploadFile);
+                return;
             }
         }
         if (data.method === 'GET') {
