@@ -404,6 +404,8 @@ async function downloadFile(userInfo, fileId, res) {
         return;
     }
 
+    res.setHeader('Content-Disposition', 'attachment; filename=' + fileInfo.filename);
+
     var accessTokens = {};
 
     if (userData.hasOwnProperty('drop_box_access_token')) {

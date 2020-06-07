@@ -24,7 +24,7 @@ async function getUserInfo(userInfo) {
 
 
     var filesData = await mongoSingelton.filesDB.find({ "user_id": ObjectID(userInfo._id), "created": true }).toArray();
-    var dataSize = await mongoSingelton.filesDB.stats(indexDetails: true);
+    var dataSize = await mongoSingelton.filesDB.stats({ indexDetails: true });
 
 
     var responseObject = {};
@@ -37,7 +37,7 @@ async function getUserInfo(userInfo) {
 
         files.push({
             "filename": filesData[i].filename,
-            "_id": filesData[i]._id
+            "_id": filesData[i]._id.toHexString()
 
         });
     }
