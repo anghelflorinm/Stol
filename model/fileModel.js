@@ -424,172 +424,301 @@ async function downloadFile(userInfo, fileId, res) {
 
     var fileParts = await mongoSingelton.filePartsDB.find({ 'file_id': ObjectID(fileId) }).sort({ 'file_part': 1 }).toArray();
     var result = true;
+
+    var eventEmitter = new EventEmitter();
+
     for (var i = 0; i < fileParts.length; i++) {
+        var eventObject = {
+            eventEmitter: eventEmitter,
+            partNumber: (i + 1),
+            maxPart: fileParts.length
+        }
         switch (fileParts[i].type) {
             case "google_drive":
-                result = await downloadFilePartGoogleDrive(fileParts[i].cloud_id, res, accessTokens.google_drive, fileParts[i].file_hash);
+                downloadFilePartGoogleDrive(fileParts[i].cloud_id, res, accessTokens.google_drive, fileParts[i].file_hash, eventObject);
                 break;
             case "one_drive":
-                result = await downloadFilePartOneDrive(fileParts[i].cloud_id, res, accessTokens.one_drive, fileParts[i].file_hash);
+                downloadFilePartOneDrive(fileParts[i].cloud_id, res, accessTokens.one_drive, fileParts[i].file_hash, eventObject);
                 break;
             case "drop_box":
-                result = await donwloadFilePartDropbox(fileParts[i].cloud_id, res, accessTokens.drop_box, fileParts[i].file_hash);
+                donwloadFilePartDropbox(fileParts[i].cloud_id, res, accessTokens.drop_box, fileParts[i].file_hash, eventObject);
                 break;
         }
     }
-    res.end();
+
+    eventEmitter.on('end', () => {
+        res.end();
+    })
+    eventEmitter.emit('part1');
 }
 
-function downloadFilePartOneDrive(id, res, accessToken, requiredMd5Hash) {
-    return new Promise(function(resolve, reject) {
-        const bearer = 'Bearer ' + accessToken;
-        const filePath = '/v1.0/me/drive/items/' + id + '/content';
-        var options = {
-            method: 'GET',
-            host: 'graph.microsoft.com',
-            path: filePath,
-            headers: {
-                'Authorization': bearer
-            }
+function downloadFilePartOneDrive(id, res, accessToken, requiredMd5Hash, eventObject) {
+    const bearer = 'Bearer ' + accessToken;
+    const filePath = '/v1.0/me/drive/items/' + id + '/content';
+    var options = {
+        method: 'GET',
+        host: 'graph.microsoft.com',
+        path: filePath,
+        headers: {
+            'Authorization': bearer
         }
-        let ok = true;
-        var req = https.request(options, (response) => {
-            response.on('data', (chunk) => {
+    }
+    let ok = true;
 
-            });
-            response.on('end', () => {
-                if (response.statusCode == 302) {
-                    /*const md5Hash = crypto.createHash('md5').update(buffer).digest('hex');
-                    if (md5Hash != requiredMd5Hash) {
-                        ok = false;
-                    }
-                    res.write(buffer, 'binary');*/
-                    var redirectURL = response.headers.location;
-                    const parsedURL = url.parse(redirectURL, true);
-                    const requestPath = parsedURL.pathname;
-                    const requestHost = parsedURL.hostname;
-                    var fileRequest = https.request({ method: 'GET', host: requestHost, path: requestPath }, (fileResponse) => {
-                        let buffer = Buffer.from('');
-                        fileResponse.on('data', (chunk) => {
-                            buffer = Buffer.concat([buffer, chunk]);
-                        });
-                        fileResponse.on('end', () => {
-                            if (fileResponse.statusCode === 200) {
-                                const md5Hash = crypto.createHash('md5').update(buffer).digest('hex');
-                                if (md5Hash != requiredMd5Hash) {
-                                    ok = false;
-                                }
-                                res.write(buffer, 'binary');
-                            } else {
+    var ready = false;
+    var previousReady = false;
+
+    const currentPartEvent = 'part' + eventObject.partNumber.toString();
+    const nextPartEvent = 'part' + (eventObject.partNumber + 1).toString();
+
+    const readyEvent = 'ready' + eventObject.partNumber.toString();
+
+    const sendEvent = 'send' + eventObject.partNumber.toString();
+
+    var eventEmitter = eventObject.eventEmitter;
+
+    let buffer = Buffer.from('');
+    var req = https.request(options, (response) => {
+        response.on('data', (chunk) => {
+
+        });
+        response.on('end', () => {
+            if (response.statusCode == 302) {
+                /*const md5Hash = crypto.createHash('md5').update(buffer).digest('hex');
+                if (md5Hash != requiredMd5Hash) {
+                    ok = false;
+                }
+                res.write(buffer, 'binary');*/
+                var redirectURL = response.headers.location;
+                const parsedURL = url.parse(redirectURL, true);
+                const requestPath = parsedURL.pathname;
+                const requestHost = parsedURL.hostname;
+                var fileRequest = https.request({ method: 'GET', host: requestHost, path: requestPath }, (fileResponse) => {
+
+                    fileResponse.on('data', (chunk) => {
+                        buffer = Buffer.concat([buffer, chunk]);
+                    });
+                    fileResponse.on('end', () => {
+                        if (fileResponse.statusCode === 200) {
+                            const md5Hash = crypto.createHash('md5').update(buffer).digest('hex');
+                            if (md5Hash != requiredMd5Hash) {
                                 ok = false;
                             }
-                            resolve(ok);
-                        });
 
+                        } else {
+                            ok = false;
+                        }
+                        eventEmitter.emit(readyEvent);
+                        return ok;
                     });
-                    fileRequest.end();
-                } else {
-                    ok = false;
-                    resolve(ok);
-                }
-            });
-        });
-        req.end();
-    });
-}
 
-function donwloadFilePartDropbox(id, res, accessToken, requiredMd5Hash) {
-    return new Promise(function(resolve, reject) {
-        const bearer = 'Bearer ' + accessToken;
-        var fileMetadata = {
-            "path": id
-        }
-
-        var options = {
-            method: 'POST',
-            host: 'content.dropboxapi.com',
-            path: '/2/files/download',
-            headers: { 'Authorization': bearer, 'Dropbox-API-Arg': JSON.stringify(fileMetadata) }
-        }
-        var ok = true;
-        var req = https.request(options, response => {
-            let buffer = Buffer.from('');
-            response.on('data', chunk => {
-                buffer = Buffer.concat([buffer, chunk])
-            });
-            response.on('end', () => {
-                //console.log(buffer.toString());
-                if (response.statusCode === 200) {
-                    const md5Hash = crypto.createHash('md5').update(buffer).digest('hex');
-                    if (md5Hash != requiredMd5Hash) {
-                        ok = false;
-                    }
-                    res.write(buffer, 'binary');
-                } else {
-                    ok = false;
-                }
-                resolve(ok);
-            });
-        });
-        req.end();
-    });
-}
-
-function downloadFilePartGoogleDrive(id, res, accessToken, requiredMd5Hash) {
-    return new Promise(function(resolve, reject) {
-        const bearer = 'Bearer ' + accessToken;
-        const filePath = '/drive/v2/files/' + id;
-        var options = {
-            method: 'GET',
-            host: 'www.googleapis.com',
-            path: filePath,
-            headers: {
-                'Authorization': bearer
+                });
+                fileRequest.end();
+            } else {
+                ok = false;
+                eventEmitter.emit(readyEvent);
+                return ok;
             }
+        });
+    });
+    req.end();
+    eventEmitter.on(currentPartEvent, () => {
+        console.log(currentPartEvent);
+        previousReady = true;
+        if (ready && previousReady) {
+            eventEmitter.emit(sendEvent);
         }
-        let ok = true;
-        var req = https.request(options, (response) => {
-            var jsonString = '';
-            response.on('data', (chunk) => {
-                jsonString += chunk;
-            });
-            response.on('end', () => {
-                console.log(jsonString);
-                if (response.statusCode == 200) {
-                    var responseObject = JSON.parse(jsonString);
-                    var redirectURL = responseObject.downloadUrl;
-                    const parsedURL = url.parse(redirectURL, true);
-                    const requestPath = parsedURL.pathname + parsedURL.search;
-                    const requestHost = parsedURL.hostname;
-                    var fileRequest = https.request({ method: 'GET', host: requestHost, path: requestPath, headers: { 'Authorization': bearer } }, (fileResponse) => {
-                        let buffer = Buffer.from('');
-                        fileResponse.on('data', (chunk) => {
-                            buffer = Buffer.concat([buffer, chunk]);
-                        });
-                        fileResponse.on('end', () => {
-                            //console.log(buffer.toString());
-                            if (fileResponse.statusCode === 200) {
-                                const md5Hash = crypto.createHash('md5').update(buffer).digest('hex');
-                                if (md5Hash != requiredMd5Hash) {
-                                    ok = false;
-                                }
-                                res.write(buffer, 'binary');
-                            } else {
+    });
+    eventEmitter.on(readyEvent, () => {
+        console.log(readyEvent);
+        ready = true;
+        if (ready && previousReady) {
+            eventEmitter.emit(sendEvent);
+        }
+    });
+    eventEmitter.on(sendEvent, () => {
+        console.log(sendEvent);
+        res.write(buffer, 'binary');
+        if (eventObject.partNumber == eventObject.maxPart) {
+            eventEmitter.emit('end');
+        } else {
+            eventEmitter.emit(nextPartEvent)
+        }
+
+    })
+}
+
+function donwloadFilePartDropbox(id, res, accessToken, requiredMd5Hash, eventObject) {
+    const bearer = 'Bearer ' + accessToken;
+    var fileMetadata = {
+        "path": id
+    }
+
+    var options = {
+        method: 'POST',
+        host: 'content.dropboxapi.com',
+        path: '/2/files/download',
+        headers: { 'Authorization': bearer, 'Dropbox-API-Arg': JSON.stringify(fileMetadata) }
+    }
+    var ok = true;
+    let buffer = Buffer.from('');
+
+
+
+    var ready = false;
+    var previousReady = false;
+
+    const currentPartEvent = 'part' + eventObject.partNumber.toString();
+    const nextPartEvent = 'part' + (eventObject.partNumber + 1).toString();
+
+    const readyEvent = 'ready' + eventObject.partNumber.toString();
+
+    const sendEvent = 'send' + eventObject.partNumber.toString();
+
+    var eventEmitter = eventObject.eventEmitter;
+
+
+
+    var req = https.request(options, response => {
+        response.on('data', chunk => {
+            buffer = Buffer.concat([buffer, chunk])
+        });
+        response.on('end', () => {
+            //console.log(buffer.toString());
+            if (response.statusCode === 200) {
+                const md5Hash = crypto.createHash('md5').update(buffer).digest('hex');
+                if (md5Hash != requiredMd5Hash) {
+                    ok = false;
+                }
+            } else {
+                ok = false;
+            }
+            eventEmitter.emit(readyEvent);
+
+            return ok;
+        });
+    });
+    req.end();
+    eventEmitter.on(currentPartEvent, () => {
+        console.log(currentPartEvent);
+        previousReady = true;
+        if (ready && previousReady) {
+            eventEmitter.emit(sendEvent);
+        }
+    });
+    eventEmitter.on(readyEvent, () => {
+        console.log(readyEvent);
+        ready = true;
+        if (ready && previousReady) {
+            eventEmitter.emit(sendEvent);
+        }
+    });
+    eventEmitter.on(sendEvent, () => {
+        console.log(sendEvent);
+        res.write(buffer, 'binary');
+        if (eventObject.partNumber == eventObject.maxPart) {
+            eventEmitter.emit('end');
+        } else {
+            eventEmitter.emit(nextPartEvent)
+        }
+
+    })
+}
+
+function downloadFilePartGoogleDrive(id, res, accessToken, requiredMd5Hash, eventObject) {
+    const bearer = 'Bearer ' + accessToken;
+    const filePath = '/drive/v2/files/' + id;
+    var options = {
+        method: 'GET',
+        host: 'www.googleapis.com',
+        path: filePath,
+        headers: {
+            'Authorization': bearer
+        }
+    }
+    let ok = true;
+
+    var ready = false;
+    var previousReady = false;
+
+    const currentPartEvent = 'part' + eventObject.partNumber.toString();
+    const nextPartEvent = 'part' + (eventObject.partNumber + 1).toString();
+
+    const readyEvent = 'ready' + eventObject.partNumber.toString();
+
+    const sendEvent = 'send' + eventObject.partNumber.toString();
+
+    var eventEmitter = eventObject.eventEmitter;
+
+    let buffer = Buffer.from('');
+    var req = https.request(options, (response) => {
+        var jsonString = '';
+        response.on('data', (chunk) => {
+            jsonString += chunk;
+        });
+
+        response.on('end', () => {
+            console.log(jsonString);
+            if (response.statusCode == 200) {
+                var responseObject = JSON.parse(jsonString);
+                var redirectURL = responseObject.downloadUrl;
+                const parsedURL = url.parse(redirectURL, true);
+                const requestPath = parsedURL.pathname + parsedURL.search;
+                const requestHost = parsedURL.hostname;
+                var fileRequest = https.request({ method: 'GET', host: requestHost, path: requestPath, headers: { 'Authorization': bearer } }, (fileResponse) => {
+
+                    fileResponse.on('data', (chunk) => {
+                        buffer = Buffer.concat([buffer, chunk]);
+                    });
+                    fileResponse.on('end', () => {
+                        //console.log(buffer.toString());
+                        if (fileResponse.statusCode === 200) {
+                            const md5Hash = crypto.createHash('md5').update(buffer).digest('hex');
+                            if (md5Hash != requiredMd5Hash) {
                                 ok = false;
                             }
-                            resolve(ok);
-                        });
-
+                        } else {
+                            ok = false;
+                        }
+                        eventEmitter.emit(readyEvent);
+                        return ok;
                     });
-                    fileRequest.end();
-                } else {
-                    ok = false;
-                    resolve(ok);
-                }
-            });
+
+                });
+                fileRequest.end();
+            } else {
+                ok = false;
+                eventEmitter.emit(readyEvent);
+                return ok;
+            }
         });
-        req.end();
     });
+    req.end();
+
+    eventEmitter.on(currentPartEvent, () => {
+        console.log(currentPartEvent);
+        previousReady = true;
+        if (ready && previousReady) {
+            eventEmitter.emit(sendEvent);
+        }
+    });
+    eventEmitter.on(readyEvent, () => {
+        console.log(readyEvent);
+        ready = true;
+        if (ready && previousReady) {
+            eventEmitter.emit(sendEvent);
+        }
+    });
+    eventEmitter.on(sendEvent, () => {
+        console.log(sendEvent);
+        res.write(buffer, 'binary');
+        if (eventObject.partNumber == eventObject.maxPart) {
+            eventEmitter.emit('end');
+        } else {
+            eventEmitter.emit(nextPartEvent)
+        }
+
+    })
 }
 
 async function deleteFile(userInfo, fileId) {
