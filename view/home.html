@@ -30,17 +30,12 @@
                 <button class="upload-btn" onclick="document.getElementById('getFile').click()">UPLOAD FILE</button>
                 <input type="file" id="getFile"></input>
             </div>
-            <div class="large-text">
+            <p id="progress-text"></p>
+            <div id="progress_files">
 
-                <progress id="file" value="66" max="100">66%</progress>
-                <p id="myP">Used <span id="demo">3GB</span> of 10GB</p>
             </div>
 
-            <h1 class="paragraph">Available GB</h1>
-            <div onclick="move()" id="myProgress">
-                <div id="myBar"></div>
-            </div>
-            <br>
+
         </div>
         <div class="column">
             <ul id="dynamic_files">

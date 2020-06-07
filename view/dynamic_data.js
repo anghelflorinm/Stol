@@ -140,3 +140,72 @@ function loginInformation(response) {
     div3.appendChild(btn3);
 
 }
+
+const xhr2 = new XMLHttpRequest();
+xhr2.onload = function() {
+    if (this.status == 200) {
+        try {
+            const response = JSON.parse(this.responseText);
+            showSizes(response);
+            console.log(response);
+
+        } catch (e) {
+            console.warn('Error while parsing the JSON file!');
+        }
+
+    } else {
+        console.warn('Did not recieve 200 OK status!');
+    }
+
+
+}
+xhr2.open('GET', '/api/get-size');
+xhr2.setRequestHeader('Authorization', 'Bearer ' + loginData.token);
+xhr2.send();
+
+function showSizes(response) {
+
+    var total_available_size = 0;
+    var total_used_size = 0;
+
+    if (response.hasOwnProperty('google_drive')) {
+        total_available_size += response.google_drive.remaining;
+        total_used_size += response.google_drive.used;
+    }
+    if (response.hasOwnProperty('drop_box')) {
+        total_available_size += response.drop_box.remaining;
+        total_used_size += response.drop_box.used;
+    }
+    if (response.hasOwnProperty('one_drive')) {
+        total_available_size += response.one_drive.remaining;
+        total_used_size += response.one_drive.used;
+    }
+
+    var dynFiles = document.getElementById("progress_files");
+    var progressBar = document.createElement("progress");
+    progressBar.setAttribute("max", total_available_size);
+    progressBar.setAttribute("value", total_used_size);
+    progressBar.setAttribute("id", "progress_files");
+
+    var infoProgress = document.createElement("p");
+    infoProgress.setAttribute("id", "progress_stats");
+
+    total_used_size = total_used_size / 1024 / 1024 / 1024;
+    total_available_size = total_available_size / 1024 / 1024 / 1024;
+
+    total_available_size = parseFloat(total_available_size).toFixed(2);
+    total_used_size = parseFloat(total_used_size).toFixed(2);
+    infoProgress.innerText = total_used_size + " / " + total_available_size + " GB";
+
+    var total_remaining_size = total_available_size - total_used_size;
+
+    var remainingSize = document.getElementById("progress-text");
+    var textRemainingSize = document.createElement("a");
+    textRemainingSize.innerText = "Available Size : " + total_remaining_size + " GB";
+    remainingSize.appendChild(textRemainingSize);
+
+
+    dynFiles.appendChild(progressBar);
+    dynFiles.appendChild(infoProgress);
+
+}

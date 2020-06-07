@@ -33,3 +33,10 @@ Status:
 Authorization: Bearer "token"
 
 
+
+
+getSize() --> GOOGLE DRIVE
+          --> DROP BOX
+          --> ONE DRIVE    
+
+getAvailableSpace()    TOTAL_AVAILABLE - TOTAL_USED

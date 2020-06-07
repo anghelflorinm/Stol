@@ -73,6 +73,7 @@ function uploadFile(fileObject, file_id) {
         body: fileObject
     }).then(res => {
         if (res.status === 201) {
+
             var ul = document.getElementById('dynamic_files');
 
             var listItem = document.createElement("li");

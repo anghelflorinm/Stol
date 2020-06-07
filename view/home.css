@@ -180,13 +180,11 @@
     color: white;
     font-size: x-large;
     font-style: italic;
-    /*padding: 10px 30px;*/
     cursor: pointer;
     display: block;
     margin: 3rem;
     border: 0;
     outline: none;
-    /*border-radius: 50px;*/
 }
 
 .vl {
@@ -202,25 +200,9 @@
     margin-left: 4rem;
 }
 
-progress {
-    color: rgb(54, 51, 219);
-}
-
 progress[value] {
     width: 500px;
     height: 50px;
-    background-color: rgb(54, 51, 219);
-}
-
-#myProgress {
-    width: 25%;
-    background-color: grey;
-    margin-left: 3rem;
-}
-
-#myBar {
-    width: 1%;
-    height: 30px;
     background-color: rgb(54, 51, 219);
 }
 
@@ -272,4 +254,18 @@ ul li {
     height: auto;
     border-color: #f44336;
     color: red
+}
+
+#progress_files {
+    margin-left: 3rem;
+}
+
+#progress-text {
+    font-size: xx-large;
+    margin: 3rem;
+}
+
+#progress_stats {
+    font-size: x-large;
+    margin-left: 3rem;
 }
