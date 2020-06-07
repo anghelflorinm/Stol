@@ -114,6 +114,7 @@ function uploadFile(fileObject, file_id) {
                     a.download = filename;
                     a.click();
                     window.URL.revokeObjectURL(url);
+                    a.remove();
                     //window.location.assign(filename);
                 })
             };

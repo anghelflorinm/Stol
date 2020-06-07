@@ -25,4 +25,8 @@ function redirectToLogin() {
     f.submit();
 }
 
+function logout() {
+    window.localStorage.setItem('stol_token', null);
+}
+
 authorizeUser();

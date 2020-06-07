@@ -68,6 +68,7 @@ function dynamic_data(response) {
                     a.download = filename;
                     a.click();
                     window.URL.revokeObjectURL(url);
+                    a.remove();
                     //window.location.assign(filename);
                 })
             };
