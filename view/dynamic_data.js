@@ -163,10 +163,13 @@ xhr2.open('GET', '/api/get-size');
 xhr2.setRequestHeader('Authorization', 'Bearer ' + loginData.token);
 xhr2.send();
 
+var total_available_size = 0;
+var total_used_size = 0;
+var total_remaining_size = 0;
+
 function showSizes(response) {
 
-    var total_available_size = 0;
-    var total_used_size = 0;
+
 
     if (response.hasOwnProperty('google_drive')) {
         total_available_size += response.google_drive.remaining;
@@ -185,7 +188,7 @@ function showSizes(response) {
     var progressBar = document.createElement("progress");
     progressBar.setAttribute("max", total_available_size);
     progressBar.setAttribute("value", total_used_size);
-    progressBar.setAttribute("id", "progress_files");
+    progressBar.setAttribute("id", "progress_files2");
 
     var infoProgress = document.createElement("p");
     infoProgress.setAttribute("id", "progress_stats");
@@ -197,7 +200,8 @@ function showSizes(response) {
     total_used_size = parseFloat(total_used_size).toFixed(2);
     infoProgress.innerText = total_used_size + " / " + total_available_size + " GB";
 
-    var total_remaining_size = total_available_size - total_used_size;
+    total_remaining_size = total_available_size - total_used_size;
+    total_remaining_size = parseFloat(total_remaining_size).toFixed(2);
 
     var remainingSize = document.getElementById("progress-text");
     var textRemainingSize = document.createElement("a");

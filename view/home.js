@@ -73,7 +73,12 @@ function uploadFile(fileObject, file_id) {
         body: fileObject
     }).then(res => {
         if (res.status === 201) {
+            const response = JSON.parse(this.responseText);
+            console.log(123 * 2);
+            console.log(response);
+            //var rezultat = JSON.parse(res);
 
+            //update_progressBar(rezultat.size);
             var ul = document.getElementById('dynamic_files');
 
             var listItem = document.createElement("li");
@@ -92,11 +97,6 @@ function uploadFile(fileObject, file_id) {
             downbtn.onclick = function() {
                 console.log(this.parentElement);
 
-                /*const createRequest = new XMLHttpRequest();
-                createRequest.open('GET', '/api/download-file/' + files[i]._id);
-                createRequest.setRequestHeader('Authorization', 'Bearer ' + loginData.token);*/
-                //console.log(this.parentElement.getElementsByClassName('dynamic-btn'));
-                //console.log(this.parentElement.getElementsByClassName('dynamic-btn')[0].innerText);
                 const url = '/api/download-file/' + this.parentElement.id;
                 const authHeader = 'Bearer ' + loginData.token;
                 const options = {
@@ -116,7 +116,6 @@ function uploadFile(fileObject, file_id) {
                     a.click();
                     window.URL.revokeObjectURL(url);
                     a.remove();
-                    //window.location.assign(filename);
                 })
             };
 
@@ -139,9 +138,29 @@ function uploadFile(fileObject, file_id) {
             ul.appendChild(listItem);
             listItem.appendChild(downbtn);
             listItem.appendChild(delbtn);
-            //alert('finished!');
         }
     });
+
+
+
+}
+
+function update_progressBar(response) {
+    response = response / 1024 / 1024 / 1024;
+    total_remaining_size -= response;
+    total_used_size += response;
+
+
+    var progressBar = document.getElementById("progress_files2");
+    var curValue = progressBar.getAttribute("value");
+    var curMax = progressBar.getAttribute("max");
+    var curText = document.getElementById("progress-text");
+    var curAvailable = curMax - response;
+    curText.innerText = "Available Size : " + curAvailable + " GB";
+
+    curValue += response;
+    progressBar.setAttribute("value", curValue);
+
 
 
 
