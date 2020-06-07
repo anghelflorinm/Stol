@@ -18,7 +18,7 @@
     height: 480px;
     position: relative;
     margin: 6% auto;
-    background: #fff;
+    background: rgb(198, 204, 211);
     padding: 5px;
     overflow: hidden;
 }
@@ -114,5 +114,5 @@
 
 .invalid-log {
     color: red;
-    background-color: white;
+    background-color: rgb(198, 204, 211);
 }
