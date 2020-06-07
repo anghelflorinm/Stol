@@ -12,4 +12,12 @@ async function getUserInfo(data, res) {
 
 }
 
-module.exports = { getUserInfo };
+async function getSize(data, res) {
+    res.setHeader('Content-Type', 'aplication/json');
+    const userInfo = data.user;
+    var responseObject = await userInfoModel.getSize(userInfo);
+    utilStol.jsonResponse(res, responseObject);
+    return;
+}
+
+module.exports = { getUserInfo, getSize };

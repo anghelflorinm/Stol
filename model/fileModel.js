@@ -222,8 +222,8 @@ async function getRemainingSize(accessToken, tokenType) {
                     switch (tokenType) {
                         case 'google_drive':
                             result.remaining = quotaInfo.quotaBytesTotal - quotaInfo.quotaBytesUsed;
-                            result.used = quotaInfo.quotaBytesUsed;
-                            result.total = quotaInfo.quotaBytesTotal
+                            result.used = Number(quotaInfo.quotaBytesUsed);
+                            result.total = Number(quotaInfo.quotaBytesTotal);
                             break;
                         case 'one_drive':
                             result.remaining = quotaInfo.quota.remaining;
@@ -733,7 +733,7 @@ async function deleteFile(userInfo, fileId) {
     var fileInfo = await mongoSingelton.filesDB.findOne({ _id: ObjectID(fileId), 'user_id': ObjectID(userInfo._id) });
 
     if (fileInfo == null) {
-        return utilStol.getResponseObject(res, 404, 'File not found!');
+        return utilStol.getResponseObject(404, 'File not found!');
     }
 
     var accessTokens = {};
@@ -847,4 +847,4 @@ async function deleteFileDropBox(id, accessToken) {
     req.end();
 }
 
-module.exports = { insertFile, uploadFile, downloadFile, deleteFile };
+module.exports = { insertFile, uploadFile, downloadFile, deleteFile, getRemainingSize };

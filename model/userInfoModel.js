@@ -1,5 +1,7 @@
 const mongoSingelton = require('./mongoSingleton');
 const utilStol = require('../util/utilStol');
+const fileModel = require('./fileModel')
+const authModel = require('./authModel')
 const { ObjectID } = require('mongodb')
 
 
@@ -54,4 +56,31 @@ async function getUserInfo(userInfo) {
     return responseObject;
 }
 
-module.exports = { getUserInfo };
+async function getSize(userInfo) {
+    var userData = await mongoSingelton.usersDB.findOne({ "_id": ObjectID(userInfo._id) });
+
+    if (userData == null) {
+        return utilStol.getResponseObject(404, 'This user is no longer found here!');
+    }
+    let remainingSizes = {};
+    let accessTokens = {};
+
+    if (userData.hasOwnProperty('drop_box_access_token')) {
+        accessTokens.drop_box = userData.drop_box_access_token;
+        remainingSizes.drop_box = await fileModel.getRemainingSize(accessTokens.drop_box, 'drop_box');
+    }
+
+    if (userData.hasOwnProperty('google_drive_access_token')) {
+        accessTokens.google_drive = await authModel.getNewAccessToken(userInfo._id, userData.google_drive_refresh_token, 'google_drive');
+        remainingSizes.google_drive = await fileModel.getRemainingSize(accessTokens.google_drive, 'google_drive');
+    }
+
+    if (userData.hasOwnProperty('one_drive_access_token')) {
+        accessTokens.one_drive = await authModel.getNewAccessToken(userInfo._id, userData.one_drive_refresh_token, 'one_drive');
+        remainingSizes.one_drive = await fileModel.getRemainingSize(accessTokens.one_drive, 'one_drive');
+    }
+    remainingSizes.code = 200;
+    return remainingSizes;
+}
+
+module.exports = { getUserInfo, getSize };

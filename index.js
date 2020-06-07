@@ -83,6 +83,10 @@ const server = https.createServer(options, async function(req, res) {
                 loginController.isAuthorized(data, res, fileController.getFile);
                 return;
             }
+            if (requestPath === 'get-size') {
+                loginController.isAuthorized(data, res, userInfoController.getSize);
+                return;
+            }
         }
         if (data.method === 'DELETE') {
             if (requestPath.startsWith('delete-file') && splitPath.length === 2) {
