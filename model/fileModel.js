@@ -68,19 +68,19 @@ async function uploadFile(userInfo, fileId, data) {
                 if (userData.hasOwnProperty('drop_box_access_token')) {
                     accessTokens.drop_box = userData.drop_box_access_token;
                     remainingSizes.drop_box = await getRemainingSize(accessTokens.drop_box, 'drop_box');
-                    remainingTotalSize += remainingSizes.drop_box;
+                    remainingTotalSize += remainingSizes.drop_box.remaining;
                 }
 
                 if (userData.hasOwnProperty('google_drive_access_token')) {
                     accessTokens.google_drive = await authModel.getNewAccessToken(userInfo._id, userData.google_drive_refresh_token, 'google_drive');
                     remainingSizes.google_drive = await getRemainingSize(accessTokens.google_drive, 'google_drive');
-                    remainingTotalSize += remainingSizes.google_drive;
+                    remainingTotalSize += remainingSizes.google_drive.remaining;
                 }
 
                 if (userData.hasOwnProperty('one_drive_access_token')) {
                     accessTokens.one_drive = await authModel.getNewAccessToken(userInfo._id, userData.one_drive_refresh_token, 'one_drive');
                     remainingSizes.one_drive = await getRemainingSize(accessTokens.one_drive, 'one_drive');
-                    remainingTotalSize += remainingSizes.one_drive;
+                    remainingTotalSize += remainingSizes.one_drive.remaining;
                 }
 
                 if (remainingTotalSize < data.headers['content-length']) {
@@ -92,7 +92,7 @@ async function uploadFile(userInfo, fileId, data) {
                 while (!accessTokens.hasOwnProperty(storageApiNames[currentStorageIndex])) {
                     currentStorageIndex = currentStorageIndex + 1;
                 }
-                nextSize = Math.min(MAX_PART_SIZE, remainingSizes[storageApiNames[currentStorageIndex]]);
+                nextSize = Math.min(MAX_PART_SIZE, remainingSizes[storageApiNames[currentStorageIndex]].remaining);
                 currentBuffer = Buffer.alloc(nextSize);
             }
 
@@ -118,7 +118,7 @@ async function uploadFile(userInfo, fileId, data) {
                                 break;
                         }
 
-                        remainingSizes[storageApiNames[currentStorageIndex]] = remainingSizes[storageApiNames[currentStorageIndex]] - nextSize;
+                        remainingSizes[storageApiNames[currentStorageIndex]].remaining = remainingSizes[storageApiNames[currentStorageIndex]].remaining - nextSize;
 
                         partNumber = partNumber + 1;
 
@@ -128,7 +128,7 @@ async function uploadFile(userInfo, fileId, data) {
                             currentStorageIndex = currentStorageIndex + 1;
                         }
 
-                        nextSize = Math.min(MAX_PART_SIZE, remainingSizes[storageApiNames[currentStorageIndex]]);
+                        nextSize = Math.min(MAX_PART_SIZE, remainingSizes[storageApiNames[currentStorageIndex]].remaining);
 
                         currentBuffer = Buffer.alloc(nextSize);
                         currentPosition = 0;
@@ -158,7 +158,7 @@ async function uploadFile(userInfo, fileId, data) {
                                 break;
                         }
                         let responseObject = { code: 201, message: 'Successfully created!' };
-                        mongoSingelton.filesDB.updateOne({ _id: ObjectID(fileId) }, { $set: { created: true, 'nr_parts': partNumber } });
+                        mongoSingelton.filesDB.updateOne({ _id: ObjectID(fileId) }, { $set: { created: true, 'nr_parts': partNumber, 'size': data.headers['content-length'] } });
                         resolve(responseObject);
                         return;
                     }
@@ -218,16 +218,22 @@ async function getRemainingSize(accessToken, tokenType) {
                 console.log(jsonString);
                 if (response.statusCode == 200) {
                     quotaInfo = JSON.parse(jsonString);
-                    let result;
+                    let result = { remaining: 0, used: 0, total: 0 };
                     switch (tokenType) {
                         case 'google_drive':
-                            result = quotaInfo.quotaBytesTotal - quotaInfo.quotaBytesUsed;
+                            result.remaining = quotaInfo.quotaBytesTotal - quotaInfo.quotaBytesUsed;
+                            result.used = quotaInfo.quotaBytesUsed;
+                            result.total = quotaInfo.quotaBytesTotal
                             break;
                         case 'one_drive':
-                            result = quotaInfo.quota.remaining;
+                            result.remaining = quotaInfo.quota.remaining;
+                            result.total = quotaInfo.quota.total;
+                            result.used = quotaInfo.quota.used;
                             break;
                         case 'drop_box':
-                            result = quotaInfo.allocation.allocated - quotaInfo.used;
+                            result.remaining = quotaInfo.allocation.allocated - quotaInfo.used;
+                            result.total = quotaInfo.allocation.allocated;
+                            result.used = quotaInfo.used;
                             break;
                     }
                     resolve(result);
@@ -761,7 +767,7 @@ async function deleteFile(userInfo, fileId) {
                 break;
         }
     }
-    mongoSingelton.filePartsDB.deleteMany({ "file_id": fileId });
+    mongoSingelton.filePartsDB.deleteMany({ "file_id": ObjectID(fileId) });
     mongoSingelton.filesDB.deleteOne({ "_id": ObjectID(fileId) });
     return utilStol.getResponseObject(200, 'File Deleted');
 }
