@@ -157,7 +157,7 @@ async function uploadFile(userInfo, fileId, data) {
                                 uploadPartOneDrive(fileId, partNumber, currentBuffer, accessTokens.one_drive, currentPosition);
                                 break;
                         }
-                        let responseObject = { code: 201, message: 'Successfully created!', size: data.headers['content-length'] };
+                        let responseObject = { code: 201, message: 'Successfully created!', size: Number(data.headers['content-length']) };
                         mongoSingelton.filesDB.updateOne({ _id: ObjectID(fileId) }, { $set: { created: true, 'nr_parts': partNumber, 'size': Number(data.headers['content-length']) } });
                         resolve(responseObject);
                         return;
