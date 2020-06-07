@@ -21,12 +21,13 @@
                 <button type="submit" class="submit-btn">Log in</button>
 
             </form>
-            <form id="register" class="input-group">
-                <input type="text" class="input-field" placeholder="Username" required>
-                <input type="text" class="input-field" placeholder="Email" required>
-                <input type="text" class="input-field" placeholder="Password" required>
+
+            <form id="register" class="input-group" onsubmit="submitRegister(); return false;">
+                <input id="registerUsername" type="text" class="input-field" placeholder="Username" required>
+                <input id="registerEmail" type="text" class="input-field" placeholder="Email" required>
+                <input id="registerPassword" type="text" class="input-field" placeholder="Password" required>
                 <p id="demo" class="invalid-log"></p>
-                <input type="checkbox" class="check-box"><span>I agree to the terms and conditions</span>
+                <input type="checkbox" class="check-box" required><span>I agree to the terms and conditions</span>
                 <button type="submit" class="submit-btn">Register</button>
             </form>
         </div>

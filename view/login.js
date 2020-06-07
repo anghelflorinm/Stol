@@ -41,3 +41,31 @@ function submitLogin() {
     }
     xhr.send(JSON.stringify(userInfo));
 }
+
+function submitRegister() {
+    const xhr = new XMLHttpRequest();
+    var userInfo = { username: document.getElementById("registerUsername").value, email: document.getElementById("registerEmail").value, password: document.getElementById("registerPassword").value };
+    const url = '/api/create-user';
+    xhr.open('POST', url, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 201) {
+                var response = JSON.parse(xhr.responseText);
+                window.localStorage.setItem('stol_token', response.token);
+                var f = document.createElement("form");
+                f.setAttribute('method', "get");
+                f.setAttribute('action', '/home');
+                f.setAttribute('type', 'hidden');
+                document.body.appendChild(f);
+                f.submit();
+            } else {
+
+                document.getElementById("demo").innerHTML = "wrong username or password";
+            }
+
+        } else {
+
+        }
+    }
+    xhr.send(JSON.stringify(userInfo));
+}
