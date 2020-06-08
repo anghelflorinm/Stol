@@ -7,7 +7,7 @@ const EventEmitter = require('events');
 const crypto = require('crypto');
 const url = require('url');
 
-const MAX_PART_SIZE = 1024 * 1024;
+const MAX_PART_SIZE = 2 * 1024 * 1024;
 
 
 
