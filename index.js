@@ -9,6 +9,7 @@ const loginController = require('./controller/loginController')
 const fileController = require('./controller/fileController');
 const userInfoController = require('./controller/userInfoController');
 const authController = require('./controller/authController');
+const adminController = require('./controller/adminController');
 
 const options = {
     key: fs.readFileSync('key.pem'),
@@ -17,7 +18,8 @@ const options = {
 
 const hostname = 'localhost';
 const apiPath = 'api';
-const authPath = 'auth'
+const authPath = 'auth';
+const adminPath = 'admin';
 const port = 3000;
 
 
@@ -115,6 +117,36 @@ const server = https.createServer(options, async function(req, res) {
             if (requestPath === 'drop_box') {
                 data.tokenType = requestPath;
                 loginController.isAuthorized(data, res, authController.requestToken);
+                return;
+            }
+        }
+    }
+
+    if (requestPath.startsWith(adminPath)) {
+        requestPath = requestPath.substr(adminPath.length + 1);
+        var splitPath = requestPath.split('/');
+        if (data.method === 'GET') {
+            if (requestPath === 'get-users') {
+                loginController.isAuthorized(data, res, adminController.getUsers);
+                return;
+            }
+        }
+        if (data.method === 'PUT') {
+            if (requestPath.startsWith('grant-admin') && splitPath.length === 2) {
+                data.userId = splitPath[1];
+                loginController.isAuthorized(data, res, adminController.grantAdmin)
+                return;
+            }
+            if (requestPath.startsWith('revoke-admin') && splitPath.length === 2) {
+                data.userId = splitPath[1];
+                loginController.isAuthorized(data, res, adminController.revokeAdmin);
+                return;
+            }
+        }
+        if (data.method === 'DELETE') {
+            if (requestPath.startsWith('delete-user') && splitPath.length === 2) {
+                data.userId = splitPath[1];
+                loginController.isAuthorized(data, res, adminController.deleteUser);
                 return;
             }
         }
