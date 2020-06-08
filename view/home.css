@@ -226,6 +226,9 @@
     .vl {
         display: none;
     }
+    #vertical {
+        display: none;
+    }
     #horizontal {
         display: inline;
     }
