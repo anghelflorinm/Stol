@@ -35,7 +35,6 @@
 .topnav {
     background-color: rgb(54, 51, 219);
     overflow: hidden;
-    height: 7rem;
 }
 
 .right-items {
@@ -67,18 +66,9 @@
     display: none;
 }
 
-
-/* Add an active class to highlight the current page */
-
-
-/* Hide the link that should open and close the topnav on small screens */
-
 .topnav .icon {
     display: none;
 }
-
-
-/* Dropdown container - needed to position the dropdown content */
 
 .dropdown {
     float: left;
@@ -296,14 +286,12 @@
     font-style: italic;
     min-width: 150px;
     min-height: 40px;
-    /*padding: 10px 30px;*/
     cursor: pointer;
     display: block;
     margin: 3rem;
     border: 0;
     outline: none;
     align-self: center;
-    /*border-radius: 50px;*/
 }
 
 .vl {
