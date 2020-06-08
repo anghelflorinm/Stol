@@ -248,7 +248,7 @@ async function getRemainingSize(accessToken, tokenType) {
 async function uploadPartDropbox(fileId, filePart, contentBuffer, accessToken, bufferSize) {
     const bearer = 'Bearer ' + accessToken;
     const md5Hash = crypto.createHash('md5').update(contentBuffer).digest('hex');
-    var dropboxPath = '/Apps/Stol_Maceta_F_Big_John/' + md5Hash + '.stol';
+    var dropboxPath = '/Apps/Stol_Maceta_F_Big_John/' + fileId + '_' + filePart.toString() + '.stol';
     var fileMetadata = {
         path: dropboxPath,
         mode: 'add',
@@ -294,7 +294,7 @@ async function uploadPartDropbox(fileId, filePart, contentBuffer, accessToken, b
 async function uploadPartGoogleDrive(fileId, filePart, contentBuffer, accessToken, bufferSize) {
     const bearer = 'Bearer ' + accessToken;
     const md5Hash = crypto.createHash('md5').update(contentBuffer).digest('hex');
-    const fileName = md5Hash + '.stol';
+    const fileName = fileId + '_' + filePart.toString() + '.stol';
     var fileMetadata = {
         'name': fileName,
         'partents': ['appDataFolder']
@@ -336,7 +336,7 @@ async function uploadPartOneDrive(fileId, filePart, contentBuffer, accessToken, 
     const bearer = 'Bearer ' + accessToken;
     const md5Hash = crypto.createHash('md5').update(contentBuffer).digest('hex');
     const fileName = md5Hash + '.stol';
-    const requestPath = '/v1.0/me/drive/special/approot:/' + fileName + ':/createUploadSession';
+    const requestPath = '/v1.0/me/drive/special/approot:/' + fileId + '_' + filePart.toString() + ':/createUploadSession';
     var options = {
         method: 'POST',
         host: 'graph.microsoft.com',
