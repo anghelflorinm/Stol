@@ -1,17 +1,84 @@
-return new Promise(async function(resolve, reject) {
-        let responseObject = { code: 200, message: 'Authentication Successful!!!' };
-        let passwordHash = crypto.createHash('sha256').update(userInfo.password).digest('hex');
-        let result = await mongoSingelton.usersDB.findOne({ $or: [{ "username": userInfo.username }, { "email": userInfo.email }], "password": passwordHash });
-        if (result == null) {
-            resolve(utilStol.getResponseObject(401, 'Wrong username/email or password'));
+function uploadFile(fileObject, file_id) {
+
+    const endpoint = '/api/upload-file/' + file_id;
+    const bearer = 'Bearer ' + loginData.token;
+    fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            'Authorization': bearer
+        },
+        body: fileObject
+    }).then(res => {
+        if (res.status === 201) {
+            console.log(res.json());
+            const response = Response.parse(this);
+
+
+            //var rezultat = JSON.parse(res);
+
+            //update_progressBar(rezultat.size);
+            var ul = document.getElementById('dynamic_files');
+
+            var listItem = document.createElement("li");
+
+            listItem.setAttribute("id", file_id);
+
+            var downbtn = document.createElement("button");
+            var delbtn = document.createElement("button");
+
+            downbtn.className = "download-btn";
+            downbtn.textContent = "DOWNLOAD";
+
+            delbtn.className = "delete-btn";
+            delbtn.textContent = "DELETE";
+
+            downbtn.onclick = function() {
+                console.log(this.parentElement);
+
+                const url = '/api/download-file/' + this.parentElement.id;
+                const authHeader = 'Bearer ' + loginData.token;
+                const options = {
+                    headers: {
+                        Authorization: authHeader
+                    }
+                };
+
+                fetch(url, options).then(res => res.blob()).then(blob => {
+                    var file = window.URL.createObjectURL(blob);
+                    var filename = this.parentElement.getElementsByClassName('dynamic-btn')[0].innerText;
+                    var a = document.createElement("a");
+                    a.style = "display: none";
+                    document.body.appendChild(a);
+                    a.href = file;
+                    a.download = filename;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    a.remove();
+                })
+            };
+
+            delbtn.onclick = function() {
+                console.log(this.parentElement);
+                const url = '/api/delete-file/' + this.parentElement.id;
+                const authHeader = 'Bearer ' + loginData.token;
+                const options = {
+                    method: 'DELETE',
+                    headers: {
+                        Authorization: authHeader
+                    }
+                };
+                fetch(url, options);
+                this.parentElement.remove();
+
+            };
+
+            listItem.innerHTML = "<button class=\"dynamic-btn\">" + fileObject.name + "</button>";
+            ul.appendChild(listItem);
+            listItem.appendChild(downbtn);
+            listItem.appendChild(delbtn);
         }
+    });
 
-        let userData = { _id: result._id.toHexString(), username: result.username, email: result.email };
 
-        let privateKey = fs.readFileSync('./key.pem', 'utf8');
 
-        let token = jwt.sign(userData, privateKey, { algorithm: 'HS256', expiresIn: '2h' });
-
-        responseObject.token = token;
-        resolve(responseObject);
-    })
+}

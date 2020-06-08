@@ -151,6 +151,7 @@ xhr2.onload = function() {
 
         } catch (e) {
             console.warn('Error while parsing the JSON file!');
+            console.warn('ce pula mea');
         }
 
     } else {
@@ -169,43 +170,44 @@ var total_remaining_size = 0;
 
 function showSizes(response) {
 
-
-
     if (response.hasOwnProperty('google_drive')) {
-        total_available_size += response.google_drive.remaining;
+        total_remaining_size += response.google_drive.remaining;
         total_used_size += response.google_drive.used;
     }
     if (response.hasOwnProperty('drop_box')) {
-        total_available_size += response.drop_box.remaining;
+        total_remaining_size += response.drop_box.remaining;
         total_used_size += response.drop_box.used;
     }
     if (response.hasOwnProperty('one_drive')) {
-        total_available_size += response.one_drive.remaining;
+        total_remaining_size += response.one_drive.remaining;
         total_used_size += response.one_drive.used;
     }
 
     var dynFiles = document.getElementById("progress_files");
     var progressBar = document.createElement("progress");
-    progressBar.setAttribute("max", total_available_size);
-    progressBar.setAttribute("value", total_used_size);
-    progressBar.setAttribute("id", "progress_files2");
+
 
     var infoProgress = document.createElement("p");
     infoProgress.setAttribute("id", "progress_stats");
 
     total_used_size = total_used_size / 1024 / 1024 / 1024;
-    total_available_size = total_available_size / 1024 / 1024 / 1024;
+    total_remaining_size = total_remaining_size / 1024 / 1024 / 1024;
 
-    total_available_size = parseFloat(total_available_size).toFixed(2);
-    total_used_size = parseFloat(total_used_size).toFixed(2);
-    infoProgress.innerText = total_used_size + " / " + total_available_size + " GB";
+
+    total_available_size = total_remaining_size + total_used_size;
+
+    infoProgress.innerText = parseFloat(total_used_size).toFixed(2) + " / " + parseFloat(total_available_size).toFixed(2) + " GB";
 
     total_remaining_size = total_available_size - total_used_size;
-    total_remaining_size = parseFloat(total_remaining_size).toFixed(2);
+
+    progressBar.setAttribute("max", parseFloat(total_available_size).toFixed(2));
+    progressBar.setAttribute("value", parseFloat(total_used_size).toFixed(2));
+    progressBar.setAttribute("id", "progress_files2");
+
 
     var remainingSize = document.getElementById("progress-text");
     var textRemainingSize = document.createElement("a");
-    textRemainingSize.innerText = "Available Size : " + total_remaining_size + " GB";
+    textRemainingSize.innerText = "Available Size : " + parseFloat(total_remaining_size).toFixed(2) + " GB";
     remainingSize.appendChild(textRemainingSize);
 
 

@@ -71,74 +71,75 @@ function uploadFile(fileObject, file_id) {
             'Authorization': bearer
         },
         body: fileObject
-    }).then(res => {
-        if (res.status === 201) {
-            const response = JSON.parse(this.responseText);
-            console.log(123 * 2);
-            console.log(response);
-            //var rezultat = JSON.parse(res);
+    }).then(function(res) {
+        if (res.status === 201) { return res.json(); }
+    }).then(function(data) {
 
-            //update_progressBar(rezultat.size);
-            var ul = document.getElementById('dynamic_files');
+        var size_ = data.size;
+        console.log(size_);
 
-            var listItem = document.createElement("li");
+        update_progressBar(size_);
+        var ul = document.getElementById('dynamic_files');
 
-            listItem.setAttribute("id", file_id);
+        var listItem = document.createElement("li");
 
-            var downbtn = document.createElement("button");
-            var delbtn = document.createElement("button");
+        listItem.setAttribute("id", file_id);
 
-            downbtn.className = "download-btn";
-            downbtn.textContent = "DOWNLOAD";
+        var downbtn = document.createElement("button");
+        var delbtn = document.createElement("button");
 
-            delbtn.className = "delete-btn";
-            delbtn.textContent = "DELETE";
+        downbtn.className = "download-btn";
+        downbtn.textContent = "DOWNLOAD";
 
-            downbtn.onclick = function() {
-                console.log(this.parentElement);
+        delbtn.className = "delete-btn";
+        delbtn.textContent = "DELETE";
 
-                const url = '/api/download-file/' + this.parentElement.id;
-                const authHeader = 'Bearer ' + loginData.token;
-                const options = {
-                    headers: {
-                        Authorization: authHeader
-                    }
-                };
+        downbtn.onclick = function() {
+            console.log(this.parentElement);
 
-                fetch(url, options).then(res => res.blob()).then(blob => {
-                    var file = window.URL.createObjectURL(blob);
-                    var filename = this.parentElement.getElementsByClassName('dynamic-btn')[0].innerText;
-                    var a = document.createElement("a");
-                    a.style = "display: none";
-                    document.body.appendChild(a);
-                    a.href = file;
-                    a.download = filename;
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    a.remove();
-                })
+            const url = '/api/download-file/' + this.parentElement.id;
+            const authHeader = 'Bearer ' + loginData.token;
+            const options = {
+                headers: {
+                    Authorization: authHeader
+                }
             };
 
-            delbtn.onclick = function() {
-                console.log(this.parentElement);
-                const url = '/api/delete-file/' + this.parentElement.id;
-                const authHeader = 'Bearer ' + loginData.token;
-                const options = {
-                    method: 'DELETE',
-                    headers: {
-                        Authorization: authHeader
-                    }
-                };
-                fetch(url, options);
-                this.parentElement.remove();
+            fetch(url, options).then(res => res.blob()).then(blob => {
+                var file = window.URL.createObjectURL(blob);
+                var filename = this.parentElement.getElementsByClassName('dynamic-btn')[0].innerText;
+                var a = document.createElement("a");
+                a.style = "display: none";
+                document.body.appendChild(a);
+                a.href = file;
+                a.download = filename;
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+            })
+        };
 
+        delbtn.onclick = function() {
+            console.log(this.parentElement);
+            const url = '/api/delete-file/' + this.parentElement.id;
+            const authHeader = 'Bearer ' + loginData.token;
+            const options = {
+                method: 'DELETE',
+                headers: {
+                    Authorization: authHeader
+                }
             };
+            fetch(url, options);
+            //update_progressBar(-size_);
+            this.parentElement.remove();
 
-            listItem.innerHTML = "<button class=\"dynamic-btn\">" + fileObject.name + "</button>";
-            ul.appendChild(listItem);
-            listItem.appendChild(downbtn);
-            listItem.appendChild(delbtn);
-        }
+        };
+
+        listItem.innerHTML = "<button class=\"dynamic-btn\">" + fileObject.name + "</button>";
+        ul.appendChild(listItem);
+        listItem.appendChild(downbtn);
+        listItem.appendChild(delbtn);
+
     });
 
 
@@ -147,21 +148,18 @@ function uploadFile(fileObject, file_id) {
 
 function update_progressBar(response) {
     response = response / 1024 / 1024 / 1024;
-    total_remaining_size -= response;
-    total_used_size += response;
+    total_remaining_size = (parseFloat(total_remaining_size) - parseFloat(response));
+    total_used_size = (parseFloat(total_used_size) + parseFloat(response));
 
 
     var progressBar = document.getElementById("progress_files2");
-    var curValue = progressBar.getAttribute("value");
-    var curMax = progressBar.getAttribute("max");
     var curText = document.getElementById("progress-text");
-    var curAvailable = curMax - response;
-    curText.innerText = "Available Size : " + curAvailable + " GB";
+    var progressStats = document.getElementById("progress_stats");
 
-    curValue += response;
-    progressBar.setAttribute("value", curValue);
+    var curAvailable = total_remaining_size;
 
-
-
+    curText.innerText = "Available Size : " + parseFloat(curAvailable).toFixed(2) + " GB";
+    progressBar.setAttribute("value", parseFloat(total_used_size).toFixed(2));
+    progressStats.innerText = parseFloat(total_used_size).toFixed(2) + " / " + parseFloat(total_available_size).toFixed(2) + " GB";
 
 }
