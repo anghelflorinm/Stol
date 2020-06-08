@@ -151,7 +151,6 @@ xhr2.onload = function() {
 
         } catch (e) {
             console.warn('Error while parsing the JSON file!');
-            console.warn('ce pula mea');
         }
 
     } else {
