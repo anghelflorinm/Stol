@@ -220,6 +220,10 @@ ul li {
     height: 0;
 }
 
+#column2 {
+    display: flex
+}
+
 .dynamic-btn {
     background-color: rgb(54, 51, 219);
     border: none;
