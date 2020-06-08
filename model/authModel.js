@@ -33,8 +33,8 @@ async function getNewAccessToken(userId, refreshToken, tokenType) {
 
         switch (tokenType) {
             case 'google_drive':
-                clientSecret = 'AA1Fgh73r1Zshw8Yp-KBsdaC';
-                clientId = '1078202946949-6vjgaicg03i1cbpj9keebrsfg2mp2er7.apps.googleusercontent.com';
+                clientSecret = 'H-10foGOt4wCPIO4YrrcTPbq';
+                clientId = '548858930550-ln302roit3f05309k1r8ef653kgb3i8v.apps.googleusercontent.com';
                 options.host = 'oauth2.googleapis.com';
                 options.path = '/token';
                 break;

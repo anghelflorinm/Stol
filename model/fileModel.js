@@ -7,7 +7,7 @@ const EventEmitter = require('events');
 const crypto = require('crypto');
 const url = require('url');
 
-const MAX_PART_SIZE = 2 * 1024 * 1024;
+const MAX_PART_SIZE = 1 * 1024 * 1024;
 
 
 
@@ -521,6 +521,7 @@ function downloadFilePartOneDrive(id, res, accessToken, requiredMd5Hash, eventOb
 
                         } else {
                             ok = false;
+                            console.log(buffer.toString());
                         }
                         eventEmitter.emit(readyEvent);
                         return ok;
@@ -537,21 +538,21 @@ function downloadFilePartOneDrive(id, res, accessToken, requiredMd5Hash, eventOb
     });
     req.end();
     eventEmitter.on(currentPartEvent, () => {
-        console.log(currentPartEvent);
+        //console.log(currentPartEvent);
         previousReady = true;
         if (ready && previousReady) {
             eventEmitter.emit(sendEvent);
         }
     });
     eventEmitter.on(readyEvent, () => {
-        console.log(readyEvent);
+        //console.log(readyEvent);
         ready = true;
         if (ready && previousReady) {
             eventEmitter.emit(sendEvent);
         }
     });
     eventEmitter.on(sendEvent, () => {
-        console.log(sendEvent);
+        // console.log(sendEvent);
         res.write(buffer, 'binary');
         if (eventObject.partNumber == eventObject.maxPart) {
             eventEmitter.emit('end');
@@ -606,6 +607,7 @@ function donwloadFilePartDropbox(id, res, accessToken, requiredMd5Hash, eventObj
                 }
             } else {
                 ok = false;
+                console.log(buffer.toString());
             }
             eventEmitter.emit(readyEvent);
 
@@ -614,21 +616,21 @@ function donwloadFilePartDropbox(id, res, accessToken, requiredMd5Hash, eventObj
     });
     req.end();
     eventEmitter.on(currentPartEvent, () => {
-        console.log(currentPartEvent);
+        //console.log(currentPartEvent);
         previousReady = true;
         if (ready && previousReady) {
             eventEmitter.emit(sendEvent);
         }
     });
     eventEmitter.on(readyEvent, () => {
-        console.log(readyEvent);
+        //console.log(readyEvent);
         ready = true;
         if (ready && previousReady) {
             eventEmitter.emit(sendEvent);
         }
     });
     eventEmitter.on(sendEvent, () => {
-        console.log(sendEvent);
+        //console.log(sendEvent);
         res.write(buffer, 'binary');
         if (eventObject.partNumber == eventObject.maxPart) {
             eventEmitter.emit('end');
@@ -672,7 +674,7 @@ function downloadFilePartGoogleDrive(id, res, accessToken, requiredMd5Hash, even
         });
 
         response.on('end', () => {
-            console.log(jsonString);
+            //console.log(jsonString);
             if (response.statusCode == 200) {
                 var responseObject = JSON.parse(jsonString);
                 var redirectURL = responseObject.downloadUrl;
@@ -693,6 +695,7 @@ function downloadFilePartGoogleDrive(id, res, accessToken, requiredMd5Hash, even
                             }
                         } else {
                             ok = false;
+                            console.log(buffer.toString());
                         }
                         eventEmitter.emit(readyEvent);
                         return ok;
@@ -710,21 +713,21 @@ function downloadFilePartGoogleDrive(id, res, accessToken, requiredMd5Hash, even
     req.end();
 
     eventEmitter.on(currentPartEvent, () => {
-        console.log(currentPartEvent);
+        //console.log(currentPartEvent);
         previousReady = true;
         if (ready && previousReady) {
             eventEmitter.emit(sendEvent);
         }
     });
     eventEmitter.on(readyEvent, () => {
-        console.log(readyEvent);
+        //console.log(readyEvent);
         ready = true;
         if (ready && previousReady) {
             eventEmitter.emit(sendEvent);
         }
     });
     eventEmitter.on(sendEvent, () => {
-        console.log(sendEvent);
+        //console.log(sendEvent);
         res.write(buffer, 'binary');
         if (eventObject.partNumber == eventObject.maxPart) {
             eventEmitter.emit('end');

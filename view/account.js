@@ -33,7 +33,7 @@ function move() {
 
 function loginGD() {
 
-    const clientId = '1078202946949-6vjgaicg03i1cbpj9keebrsfg2mp2er7.apps.googleusercontent.com';
+    const clientId = '548858930550-ln302roit3f05309k1r8ef653kgb3i8v.apps.googleusercontent.com';
     const scope = 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file'
     const redirectUri = 'https://localhost:3000/auth/google_drive';
 
