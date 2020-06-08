@@ -1,0 +1,3 @@
+[submodule "presentation/technical_report/scholarly-html"]
+	path = presentation/technical_report/scholarly-html
+	url = https://github.com/w3c/scholarly-html.git
