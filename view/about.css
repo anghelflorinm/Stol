@@ -12,3 +12,29 @@
     background-size: cover;
     position: absolute;
 }
+
+.big-text {
+    padding-top: 20rem;
+    padding-left: 5rem;
+    font-size: xx-large;
+    color: white;
+    font-style: italic;
+}
+
+.big-btn {
+    padding-left: 45rem;
+    position: relative;
+}
+
+.btn {
+    width: 8cm;
+    height: 2cm;
+    background-color: rgb(216, 213, 213);
+    border-radius: 30px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: #0090FF;
+    color: black;
+}

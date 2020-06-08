@@ -272,6 +272,10 @@
     }
 }
 
+.column h1 {
+    position: relative;
+}
+
 .paragraph {
     margin: 4rem;
 }
@@ -302,9 +306,10 @@
 .vl {
     border-left: 6px solid rgb(54, 51, 219);
     height: 100%;
-    position: absolute;
     left: 35%;
     top: 7rem;
+    position: absolute;
+    display: flex;
 }
 
 #horizontal {
@@ -355,6 +360,7 @@ ul li {
 .column {
     flex: 50%;
     height: 0;
+    position: relative;
 }
 
 .dynamic-btn {
