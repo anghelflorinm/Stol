@@ -130,7 +130,7 @@ function uploadFile(fileObject, file_id) {
                 }
             };
             fetch(url, options);
-            //update_progressBar(-size_);
+            update_progressBar(-size_);
             this.parentElement.remove();
 
         };
