@@ -141,7 +141,7 @@ async function uploadFile(userInfo, fileId, data) {
                         currentBuffer.fill(chunk, currentPosition, currentPosition + chunk.length);
                         currentPosition += chunk.length;
                     }
-                    console.log('chunk' + (currentChunkIndex + 1).toString());
+                    //console.log('chunk' + (currentChunkIndex + 1).toString());
                     eventEmitter.removeListener(('chunk' + currentChunkIndex), handleChunk);
                     eventEmitter.emit('chunk' + (currentChunkIndex + 1).toString());
 
@@ -271,10 +271,12 @@ async function uploadPartDropbox(fileId, filePart, contentBuffer, accessToken, b
 
         res.on('end', () => {
             if (res.statusCode == 200) {
-                console.log(jsonString);
+                // console.log(jsonString);
                 var fileInfo = JSON.parse(jsonString);
                 mongoSingelton.filePartsDB.insertOne({ 'file_id': ObjectID(fileId), 'file_part': filePart, 'type': 'drop_box', 'cloud_id': fileInfo.id, 'file_hash': md5Hash });
                 return;
+            } else {
+                console.log(jsonString);
             }
         });
 
@@ -311,11 +313,13 @@ async function uploadPartGoogleDrive(fileId, filePart, contentBuffer, accessToke
         });
 
         res.on('end', () => {
-            console.log(jsonString);
+            //console.log(jsonString);
             if (res.statusCode == 200) {
                 var fileInfo = JSON.parse(jsonString);
                 mongoSingelton.filePartsDB.insertOne({ 'file_id': ObjectID(fileId), 'file_part': filePart, 'type': 'google_drive', 'cloud_id': fileInfo.id, 'file_hash': md5Hash });
                 return;
+            } else {
+                console.log(jsonString);
             }
         })
     });
@@ -345,10 +349,12 @@ async function uploadPartOneDrive(fileId, filePart, contentBuffer, accessToken, 
             jsonString += chunk;
         });
         res.on('end', () => {
-            console.log(jsonString);
+            //console.log(jsonString);
             if (res.statusCode == 200) {
                 var uploadInfo = JSON.parse(jsonString);
                 uploadPartOneDriveResumable(fileId, filePart, contentBuffer, bufferSize, uploadInfo.uploadUrl, md5Hash);
+            } else {
+                console.log(jsonString);
             }
         })
     })
@@ -373,10 +379,12 @@ async function uploadPartOneDriveResumable(fileId, filePart, contentBuffer, buff
             jsonString += chunk;
         });
         res.on('end', () => {
-            console.log(jsonString);
+            // console.log(jsonString);
             if (res.statusCode == 200 || res.statusCode == 201) {
                 var fileInfo = JSON.parse(jsonString);
                 mongoSingelton.filePartsDB.insertOne({ 'file_id': ObjectID(fileId), 'file_part': filePart, 'type': 'one_drive', 'cloud_id': fileInfo.id, 'file_hash': md5Hash });
+            } else {
+                console.log(jsonString);
             }
         })
     });
