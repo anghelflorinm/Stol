@@ -140,7 +140,7 @@ function serveFrontend(data, res) {
     }
 
     if (data.requestPath === '') {
-        data.requestPath = 'home.html'
+        data.requestPath = 'about.html'
     }
 
     var filePath = './view/' + data.requestPath;
