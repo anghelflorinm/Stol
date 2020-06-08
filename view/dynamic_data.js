@@ -209,7 +209,7 @@ function showSizes(response) {
     textRemainingSize.innerText = "Available Size : " + parseFloat(total_remaining_size).toFixed(2) + " GB";
     remainingSize.appendChild(textRemainingSize);
 
-
+    progressBar.className = ".flex_children"
     dynFiles.appendChild(progressBar);
     dynFiles.appendChild(infoProgress);
 

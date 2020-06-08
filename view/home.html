@@ -21,28 +21,34 @@
                 <a href="javascript:void(0);" class="icon" onclick="myFunction()">&#9776;</a>
             </div>
         </div>
-        <div class="column" id="column2">
-            <div>
-                <h1 class="paragraph" id="dynamic_username">Bine ai venit, </h1>
-            </div>
+        <div id="column-layout">
+            <div class="column" id="column1">
+                <h1 class="paragraph flex-children" id="dynamic_username">Bine ai venit, </h1>
 
-            <div>
-                <button class="upload-btn" onclick="document.getElementById('getFile').click()">UPLOAD FILE</button>
-                <input type="file" id="getFile">
-            </div>
-            <p id="progress-text"></p>
-            <div id="progress_files">
+                <div class="flex-children">
+                    <button id="upload" class="upload-btn flex-children" onclick="document.getElementById('getFile').click()">UPLOAD FILE</button>
+                    <input type="file" id="getFile">
+                </div>
+                <div class="flex-children">
+                    <p id="progress-text"></p>
+                </div>
 
+                <div class="flex_children" id="progress_files">
+
+                </div>
+
+
+            </div>
+            <hr id="horizontal">
+            <div class="vl"></div>
+            <div class="column" id="column2">
+                <ul id="dynamic_files">
+
+                </ul>
             </div>
 
 
         </div>
-        <div class="column">
-            <ul id="dynamic_files">
-
-            </ul>
-        </div>
-        <div class="vl"></div>
 
         <script src="home.js">
         </script>
