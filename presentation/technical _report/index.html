@@ -73,49 +73,108 @@
         <!-- review? -->
         <h2>Structure</h2>
         <p>
-            A Scholarly HTML document is a valid <a role="doc-biblioref">HTML</a> document that follows some additional rules to specialize its meaning and make it predictable to processors wishing to produce or consume scholarly articles. These rules
-            are outlined in the following sections. While valuable on its own, the content structure defined here is simply a stepping stone to enable semantic enrichment, detailed in <a href="#semantics">Semantics
-        Overlays</a>. If you would like to write a validation tool, please join us on GitHub.
+            The project was divided, as is the case with most web projects, into two main parts: backend and frontend.
         </p>
-        <section id="Root">
+        <section id="frontend">
             <!-- review? -->
-            <h3>The root and <code>head</code></h3>
+            <h3>Frontend</h3>
             <p>
-                The document must be encoded in UTF-8 and transmitted with a media type of
-                <code>text/html</code>.
+                The goal of this project was understanding how web technologies work to their very root. Thus, for the frontend development of this project we relied solely on HTML JavaScript and CSS without the help of any frameworks.
             </p>
             <p>
-                The <code>head</code> must contain <code>&lt;meta charset="utf-8"&gt;</code> element and a
-                <code>title</code> element.
+                We chose to rely on the solution of client side rendering. Using AJAX and the FETCH to call the REST API provided by the server (to be detailed in the next section), we used the information we received in JSON format to fill the page with user specific
+                information such as username, the files available, occupied space, or the added accounts.
+            </p>
+            <p>
+                The application consists of 4 main pages:
+                <ul>
+                    <li>About Page - a small introduction to the project</li>
+                    <li>Login Page - available to login available users and register new ones</li>
+                    <li>Home Page - a page where you can view your available space, available files, as well as upload new files</li>
+                    <li>Account Page - a page where you can view your available linked cloud storage accounts, as well as link to new accounts</li>
+                </ul>
+                All of these pages are detalied in the User Guide attached to this project, that we encourage you to read in order to better understand how this app should be used by everyday users.
+            </p>
+            <p>
+                To support different resolutions, the frontend neded to be responsive and adapt to all sorts of possible sizes. For this, we relied on changing the CSS styling of elements depending on different resolutions of the screen, and also on the flexbox property,
+                which allows developers to easily create responsive designs as objects automatically adapt themselves inside the flex containers.
             </p>
         </section>
-        <section id="article">
+        <section id="backend">
             <!-- review? -->
-            <h3>The <code>article</code></h3>
+            <h3>Backend</h3>
             <p>
-                The first child of <code>article</code> must be <code>header</code>. The header should contain an <code>h1</code> with the title of the document. The following element must be a
-                <code>div</code> with the role of <code>contentinfo</code> containing author and affiliation information. See <a href="#contentinfo-semantics">The <code>contentinfo</code>
-          Region Semantics</a> for information about the semantic decoration of this element.
+                The server-side of this project was written in node.js. The decision was made as we considered the learning curve would be smaller if we use JavaScript both on the fronntend and on the backend.
             </p>
-            <p>
-                Any number of <code>section</code> elements may be listed within the article at arbitrary depths, but each <code>section</code> must begin with an <code>hx</code> element, indicating a numbered section in the article. If the sections require
-                headings that exceed
-                <code>h6</code>, <code>aria-level</code> must be included to indicate depth.
-            </p>
-            <figure typeof="schema:SoftwareSourceCode" role="doc-example" id="arialevelexample">
-                <pre><code>
-    &lt;section>      
-      &lt;h6>Granular Details about Zoology&lt;/h6>
-        &lt;p>…&lt;/p>
-      &lt;section>    
-        &lt;h6 aria-level="7">Even More Information!&lt;/h6>
-          </code></pre>
-                <figcaption>Example of a level 7 heading, using <code>aria-level</code></figcaption>
-            </figure>
-            <p>
-                Each section may contain zero or more <a href="#hunk">Hunk Elements</a> and
-                <code>section</code> elements.
-            </p>
+            <section id="routing">
+                <h4>Routing</h4>
+                <p>
+                    For the routing we went with a very simple, but efficient logic that would be useful for the development process. We established that any path that begins with one of the paths code>/api
+                    </code>, <code>/auth</code> or <code>/admin</code> would be served by a special controller function. If not, then we would treat it as a static file and we would try to search for it in the <code>/view</code> view path. This meant
+                    that adding a bunch of stylesheets, images or frontend scripts would be as easy as putting them into the right folder as the server would know automatically how to serve them instead of writing a specific function for serving every
+                    single file requested.
+                </p>
+                <p>
+                    For the REST routes, we also used, in some cases, dynamic routes, for example <code>/constant-route/{dynamic-part}</code>. For simplicity of code and implementation, established that the dynamic part of the route would only come in
+                    on last position so that we could easily extract it's value.
+                </p>
+                <p>It is also worth noting the node.js included libraries allowed us to easily parse other request information (method, query parameters, request body, etc.).
+                </p>
+            </section>
+            <section id="database">
+                <h4>Database Connection</h4>
+                <p>
+                    For the database, we went with MongoDB to store our information. This is because it allows a beautiful integration with node.js since it everything is provided/inserted in JSON format.
+                </p>
+                <p>
+                    We used 3 main collections:
+                    <ul>
+                        <li>The users collection: stores all profile related information about the user</li>
+                        <li>The files collection: stores all information regading a file belonging to one of the users</li>
+                        <li>The file parts collection: stores information about every single part of the files that were divided upon uploading them, as well as information as to how to retreive them.</li>
+                    </ul>
+                </p>
+            </section>
+            <section id="login">
+                <h4>Logging the user in</h4>
+                <p>For the login module we provided the following mehods in the API:</p>
+                <ul>
+                    <li><code> POST /api/create-user </code>
+                        <p>
+                            Upon calling this request with a body constaining an email address, a username and a password as JSON, the server will check for previously exisiting users containing the same data, and creates the user, storing SHA256 hash over the password for security
+                            reasons.
+                        </p>
+                    </li>
+                    <li><code>POST /api/login</code>
+                        <p>
+                            Upon calling this request with either the username or the email address and the password, if successful, it return in the JSON response a JSON containing a JWT token. This token has an availalbility of 2 hours and can be passed in the <code>Authorization</code>                            header in order to access endpoints that require the user to be logged in.
+                        </p>
+                    </li>
+                </ul>
+            </section>
+            <section id="oauth">
+                <h4>Adding cloud storage account</h4>
+                <p>Once the user is logged in, one of the most important things he can do is add acounts make available space and start storing files. This is done by using the OAuth 2.0 workflow: the user chooses to add an account on the frontend, the frontend
+                    requests Authorization from the required service. The service the shows its own login flow, afterwards asking the user the permision to store files in a dedicated app folder. After the user agrees, the service makes a request to the
+                    Stol server containing a short lived code as query parameter which cand then be used to retreive the access tokens required to access that service. The tokens are stored in the users collection in the database so that they can be there
+                    reused for future use.
+                </p>
+            </section>
+            <section id="files">
+                <h4>Handling the file uploads and downloads</h4>
+                <p>
+                    This is the main functionality of the app, thus many implementation ideas came to mind, but below are the ones we chose:
+                </p>
+                <ul>
+                    <li><code>POST /api/create-file</code>
+                        <p>
+                            This request sends the in the body some metadata regarding the file. Upon receiving the data, the server creates the file resource with the flag "created" set to false, associates it with the calling user (based on the token) and then, if successful,
+                            returns a <code>fileId</code> in the response, which can then be used in the next endpoint to upload the file.
+                        </p>
+
+                    </li>
+                </ul>
+            </section>
         </section>
         <section id="hunk">
             <!-- review? -->
