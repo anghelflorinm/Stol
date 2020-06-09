@@ -171,7 +171,17 @@
                             This request sends the in the body some metadata regarding the file. Upon receiving the data, the server creates the file resource with the flag "created" set to false, associates it with the calling user (based on the token) and then, if successful,
                             returns a <code>fileId</code> in the response, which can then be used in the next endpoint to upload the file.
                         </p>
-
+                    </li>
+                    <li>
+                        <code>POST /api/upload-file/fileId</code>
+                        <p>
+                            Using the fileId received in the prevoius request, we call this path with the desired file as the body content. The server then first checks if there is enough space available on all the drives by comparing it to the
+                            <code>Content-Length</code> header. Then, we pre-calculate what the size of the next part to upload will be (the minimum between 5MB and the available space on the current drive to upload), Then as we process each chunk of
+                            data that arrives to the server (it is a read stream, so the entire file does not arrive at once, but in chunks ok 16kb) we either add it to the buffer,if the buffer is not full, or we create a new buffer with precalculated
+                            size, and we trigger an asyncronous downlooad. This process is repeated until all file parts have been uploaded to the server. For integrity check, we store a md5 hash for each file part. Afterwards, we mark the file as "created":true.
+                            Our method is extremely fast beacuse we send each download asyncronously, and due to safely processing all chunks in order due to event emmitting in node.js, we are able to process big files wihout having to store them enirely
+                            in the heap at once, nor do we have to write them in a temporary folder, so the file is processed in the least amount of time.
+                        </p>
                     </li>
                 </ul>
             </section>
