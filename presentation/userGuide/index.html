@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Scholarly HTML</title>
+    <link rel="stylesheet" href="css/scholarly.min.css">
+    <script src="js/scholarly.min.js"></script>
+</head>
+
+<body prefix="schema: http://schema.org">
+    <header>
+        <div class="banner">
+            <img src="scholarly-html.svg" width="227" height="50" alt="Scholarly HTML logo">
+            <div class="status">Technical Report</div>
+        </div>
+        <h1>Stol</h1>
+    </header>
+    <!--
+      XXX
+      - check refs
+      - the math example has too much maths
+      - bring back some of the old style
+      - make semantics, validation, processing sub-sections of each structural element
+      - have a section before that for general constructs
+        - explain why use RDFa
+        - explain our patterns: RDFa, roles
+      - figure captions need to get set throughout
+      - dedication? see doc-dedication
+      - syntactic constraints (prefix)
+      - needs more sthenurines
+      - examples of everything
+      - some notes on using Semantic CSS
+      - needs more RDFa in the spec itself
+    -->
+    <div role="contentinfo">
+        <dl>
+            <dt>Authors</dt>
+            <dd>
+                Anghel Florin-Mihai & Asăndoaiei David
+            </dd>
+        </dl>
+    </div>
+
+
+    <section id="informative-page">
+        <h2>Informative</h2>
+        <p>
+            This Informative Page is our first section, where it is briefly discussed what problems can appear these days when we want to send a file, and with what solution we came up to solve these problems.
+
+        </p>
+        <p>
+            The text is followed by a clickable button, which directs you to the login/register section.
+        </p>
+        <img src="./images/InformativePage.png" alt="InformativePage" width="1200" height="600">
+    </section>
+
+    <section id="login/register">
+        <h2>Login and Register</h2>
+        <p>
+            In order to access our application features, a person has either to log in with his account, either to register with an valid and non-existing username , email address and password.
+        </p>
+        <p>
+            If all credentials are validated, then the user is redirected to the home page.
+        </p>
+        <ul>
+            <li>In order to Log In or Register, all fields below are required!</li>
+        </ul>
+        <img src="./images/loginPage.png" alt="loginOption" width="1200" height="600">
+        <img src="./images/registerPage.png" alt="registerOption" width="1200" height="600">
+    </section>
+
+    <section id="topnav">
+        <h2>Navigation Bar</h2>
+        <p>This is our Navigation Bar, that allows a user to navigate through our application pages.</p>
+        <p>On the left side there is our STOL logo.</p>
+        <p>On the right side we have 3 buttons:</p>
+        <ul>
+            <li>"Home" - redirects an user to home page, where he can see various information about his storage space or his uploaded files</li>
+            <li>"My account" - redirects an user to a settings page, where he can see to which cloud storage accounts is connected to, and to which he can connect to.</li>
+            <li>"Log Out" - disconnects a user from his account, redirecting him to the main informational page</li>
+        </ul>
+        <img src="./images/topnav.png" alt="topnavBar" width="1200">
+    </section>
+    <section id="home-page">
+        <h2>
+            Home Page
+        </h2>
+        <p>
+            On application's home page, we can see various information for our account, such as:
+            <ul>
+                <li>A welcome message with your username, so you can see that your account is successfully logged</li>
+                <li>Available remaining space for uploading data</li>
+                <li>A progress bar that shows us the used space, and also this progress bar automatically updates his status when a file is deleted or uploaded</li>
+                <li>Information: Used Space / Total Available Space</li>
+                <li>A list of all files (with the file name and file extension) that the current user has</li>
+                <li>for each file we have 2 options: download and delete</li>
+            </ul>
+            <img src="./images/homePage.png" alt="homePage" width="1200" height="600">
+        </p>
+    </section>
+    <section id="myAccount-page">
+        <h2>My account</h2>
+        <p>
+            On My account page, we can set up 3 different cloud storage drives:
+        </p>
+        <ul>
+            <li>Google Drive</li>
+            <li>One Drive</li>
+            <li>Drop Box</li>
+        </ul>
+        <p>
+            For each one of them, we have a notification, informing us if we are looged or unlogged.
+            <img src="./images/ok.png" alt="ok_">
+            <br>
+            <img src="./images/notok.png" alt="ok_not">
+            <br> In case of an unlogged cloud account, we simply press on the button with the drive's name we want, and we will be redirected to the specific authentication page, then following some simple steps to sing in.
+        </p>
+
+
+        <img src="./images/myaccount.png" alt="homePage" width="1200" height="600">
+    </section>
+
+    <section id="log-out">
+        <h2>Log Out</h2>
+        <p>If we want to disconnect from our account, we press the "Log out" button from navigation bar.
+            <img src="./images/disconnect.png" alt="disconnect">
+
+            <br>After disconnect is complet, you will be redirected to the main Informational page.
+        </p>
+    </section>
+</body>
+
+</html>
