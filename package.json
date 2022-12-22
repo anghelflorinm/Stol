@@ -19,7 +19,7 @@
     },
     "homepage": "https://github.com/anghelflorinm/Stol#readme",
     "dependencies": {
-        "jsonwebtoken": "^8.5.1",
+        "jsonwebtoken": "^9.0.0",
         "mongodb": "^3.5.7"
     }
 }
